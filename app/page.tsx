@@ -4,9 +4,9 @@ import NavBar from "./components/NavBar";
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans ">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white  ">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white">
         <NavBar/>
-        <div className="flex flex-col gap-6 text-center items-center">
+        <div className="flex flex-col gap-6 text-center items-center shadow-xl shadow-red-500 p-10 rounded-lg">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black">
             This is the start of the SHPE Website.
           </h1>

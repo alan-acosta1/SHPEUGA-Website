@@ -4,9 +4,9 @@ import NavBar from "../components/NavBar";
 export default function page() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans ">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white  sm:items-start">
+      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white shadow-xl sm:items-start">
         <NavBar/>
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+        <div className="flex flex-col items-center p-20 gap-6 text-center sm:items-start shadow-xl shadow-red-500 sm:text-left">
           <p className="max-w-md text-lg leading-8 text-black">
             Looking for a starting point or more instructions?
           </p>
