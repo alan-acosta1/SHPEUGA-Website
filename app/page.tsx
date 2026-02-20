@@ -8,7 +8,7 @@ export default function Home() {
         <NavBar/>
         <div className="flex flex-col gap-6 text-center items-center shadow-xl shadow-red-500 p-10 rounded-lg">
           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black">
-            This is the start of the SHPE Website.
+            This is the start of the UGA SHPE Website.
           </h1>
           <p className="max-w-md text-lg leading-8 text-black">
             Over time we will be working towards a something we can all be proud of.
