@@ -1,9 +1,7 @@
 "use client"
 import Link from "next/link";
 import Image from "next/image";
-function noFunc() {
 
-}
 export default function NavBar() {
     
     return (
@@ -12,10 +10,10 @@ export default function NavBar() {
                 <Image src="/images/shpelogo.png" alt="SHPE Logo" width={60} height={60} className="mr-2"/>
             </a>
             <div className="flex items-left gap-10">
-                <Link href="/" className="text-black hover:text-red-500 transition-colors">Home</Link>
+                <Link href="/board" className="text-black hover:text-red-500 transition-colors">Board</Link>
                 <Link href="/about" className="text-black hover:text-red-500 transition-colors">About</Link>
-                <Link href="/events" className="text-black hover:text-red-500 transition-colors">Events</Link>
-                <Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>
+                <Link href="/event" className="text-black hover:text-red-500 transition-colors">Events</Link>
+                {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
                 <Link href="/resources" className="text-black hover:text-red-500 transition-colors">Need Help?</Link>
             </div>
             <div className="h-8 w-24">
