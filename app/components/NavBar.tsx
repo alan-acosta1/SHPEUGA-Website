@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function NavBar() {
+
     
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-1 px-1 bg-white backdrop-blur-md border-b border-white/10">
@@ -17,8 +18,11 @@ export default function NavBar() {
                 <Link href="/resources" className="text-black hover:text-red-500 transition-colors">Need Help?</Link>
             </div>
             <div className="h-8 w-24">
-                
-                <button className="border-solid border-white/20 bg-red-500  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">Login</button>
+                <Link href = "/login">
+                    <button className="border-solid border-white/20 bg-red-500  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
+                        Login
+                    </button>
+                </Link>
             </div>
         </nav>
     );
