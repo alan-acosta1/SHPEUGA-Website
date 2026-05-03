@@ -1,4 +1,3 @@
-"use"
 import SignUp from "../components/SignUp";
 import NavBar from "../components/NavBar";
 

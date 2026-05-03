@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-
-
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 export default function SignUp(){
     const [error, setError] = useState<string | null>(null);
     const [loading,setLoading] = useState(false);
@@ -13,14 +13,33 @@ export default function SignUp(){
     const [schoolId, setSchoolId] = useState("");
     const [major, setMajor] = useState("");
     const [year, setYear] = useState("");
-
+    const router = useRouter();
+    const handleSubmit = async (e:React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        const supabase = createClient();
+        const {data, error} = await supabase.auth.signUp({email,password});
+        if(error){
+            setError(error.message);
+            setLoading(false);
+        }else{
+            const {error: insertError} = await supabase.from('members').insert({first_name: firstName,last_name:lastName,email:email,major:major,school_year:year,school_id:schoolId,role:"member"})
+            if(insertError){
+                setError(insertError.message);
+                setLoading(false);
+            }else{
+                router.push(`/login`)
+            }
+        }
+    }
     return(
         <div className="flex flex-col items-center justify-center">
             <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
                 )}
-                <form className="flex flex-col gap-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <div>
                         <label className="text-sm font-medium text-gray-700">First Name</label>
                         <input
@@ -99,7 +118,8 @@ export default function SignUp(){
                     >
                         {loading ? "Registering" : "Register"}
                     
-                    </button>xs
+                    </button>
+
                 </form>
                 <p className="text-sm text-center  text-gray-600">
                     Already have an account? {" "}

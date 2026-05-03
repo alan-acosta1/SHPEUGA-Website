@@ -1,12 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function Login(){
     const [error,setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
+
+    const handleSubmit = async(e:React.FormEvent)=> {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        const supabase = createClient();
+        const {data, error} = await supabase.auth.signInWithPassword({email,password});
+        if(error){
+            setError(error.message);
+            setLoading(false);
+        }else{  
+                router.push(`/`)
+        }
+    }
+
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -15,7 +33,7 @@ export default function Login(){
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
                 )}
-                <form className="flex flex-col gap-4">
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <div>
                         <label className="text-sm font-medium text-gray-700">UGA Email</label>
                         <input
@@ -56,4 +74,3 @@ export default function Login(){
     )
 
 }
-
