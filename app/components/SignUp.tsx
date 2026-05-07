@@ -5,6 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 export default function SignUp(){
     const [error, setError] = useState<string | null>(null);
+    const [idError, setIdError] = useState<string | null>(null);
+    const [yearError, setYearError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
     const [loading,setLoading] = useState(false);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -18,6 +21,26 @@ export default function SignUp(){
         e.preventDefault();
         setLoading(true);
         setError(null);
+        if(!firstName || !lastName || !email || !password || !schoolId || !major || !year){
+            setError("Please fill in all fields");
+            setLoading(false);
+            return;
+            }
+        if(schoolId.length !== 9){
+            setIdError("School ID must be 9 digits");
+            setLoading(false);
+            return;
+        }
+        if(year.length !== 1){
+            setYearError("Only enter one digit");
+            setLoading(false);
+            return;
+        }
+        if(!email.endsWith('@uga.edu')){
+            setEmailError("Please enter UGA email");
+            setLoading(false);
+            return;
+        }
         const supabase = createClient();
         const {data, error} = await supabase.auth.signUp({email,password});
         if(error){
@@ -66,20 +89,33 @@ export default function SignUp(){
                         <input
                             type="text"
                             value={schoolId}
-                            onChange={(e)=> setSchoolId(e.target.value)}
+                            onChange={(e) =>{
+                                const value = e.target.value.replace(/[^0-9]/g, '')
+                                setSchoolId(value)
+                            }}
                             placeholder="810/811 #"
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-300 text-gray-900"
                         />
+                         {idError && (
+                                <p className="text-red-500 text-xs mt-1">{idError}</p>
+                            )}
                     </div>
                     <div>
                         <label className="text-sm font-medium text-gray-700">Year</label>
                         <input
                             type="text"
                             value={year}
-                            onChange={(e)=> setYear(e.target.value)}
+                            onChange={(e)=>{
+                                const value = e.target.value.replace(/[^0-9]/g, '')
+                                setYear(value)
+                            }}
                             placeholder="Year"
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-300 text-gray-900"
                         />
+                        {yearError && (
+                            <p className="text-red-500 text-xs mt-1">{yearError}</p>
+
+                        )}
                     </div>
                     <div>
                         <label className="text-sm font-medium text-gray-700">Major</label>
@@ -100,6 +136,9 @@ export default function SignUp(){
                             placeholder="you@uga.edu"
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-300 text-gray-900"
                         />
+                        {emailError && (
+                            <p className="text-red-500 text-xs mt-1">{emailError}</p>
+                        )}
                     </div>
                     <div>
                         <label className="text-sm font-medium text-gray-700">Password</label>
