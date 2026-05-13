@@ -4,40 +4,32 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-
+import { useAuth } from "../context/AuthContext";
 
 
 
 export default function NavBar() {
 const [user,setUser] = useState<any>(null);
-const router = useRouter()
+const router = useRouter();
 const [loading, setLoading] = useState(true);
-const [role, setRole] = useState<string | null>(null)
-
+//const [role, setRole] = useState<string | null>(null)
+const {role} = useAuth();
 useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({data}) => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({data}) =>{
         setUser(data.user)
         setLoading(false)
-        if(data.user){
-            supabase
-            .from('members')
-            .select('role')
-            .eq('user_id',data.user.id)
-            .single()
-            .then(({data: member}) => {
-                if(member) setRole(member.role)
-            })
-        }
     })
 },[])
+
+
 
 
 const handleSignout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
     setUser(null)
-    setRole(null)
+    //setRole(null)
     router.push('/')
 }
  
