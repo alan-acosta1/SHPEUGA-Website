@@ -47,7 +47,7 @@ export default function SignUp(){
             setError(error.message);
             setLoading(false);
         }else{
-            const {error: insertError} = await supabase.from('members').insert({first_name: firstName,last_name:lastName,email:email,major:major,school_year:year,school_id:schoolId,role:"member"})
+            const {error: insertError} = await supabase.from('members').insert({first_name: firstName,last_name:lastName,email:email,major:major,school_year:year,school_id:schoolId,role:"member",user_id: data.user?.id})
             if(insertError){
                 setError(insertError.message);
                 setLoading(false);

@@ -12,18 +12,32 @@ export default function NavBar() {
 const [user,setUser] = useState<any>(null);
 const router = useRouter()
 const [loading, setLoading] = useState(true);
+const [role, setRole] = useState<string | null>(null)
 
 useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({data}) => {
         setUser(data.user)
         setLoading(false)
+        if(data.user){
+            supabase
+            .from('members')
+            .select('role')
+            .eq('user_id',data.user.id)
+            .single()
+            .then(({data: member}) => {
+                if(member) setRole(member.role)
+            })
+        }
     })
+},[])
 
-}, [])
+
 const handleSignout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
+    setUser(null)
+    setRole(null)
     router.push('/')
 }
  
@@ -38,6 +52,9 @@ const handleSignout = async () => {
                 <Link href="/event" className="text-black hover:text-red-500 transition-colors">Events</Link>
                 {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
                 <Link href="/resources" className="text-black hover:text-red-500 transition-colors">Need Help?</Link>
+                {role === 'exec' &&(
+                    <Link href="/admin" className="text-black hover:text-red-500 transition-colors">Admin page</Link>
+                )}
             </div>
             <div className="h-8 w-24">
                 {!loading &&(
