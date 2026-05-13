@@ -1,6 +1,7 @@
 import NavBar from "../components/NavBar";
 import ExecCard from "../components/BoardCard";
 import { createClient } from "@/utils/supabase/server";
+export const revalidate = 3600
 export default async function boardPage(){
 
     const supabase = await createClient();
