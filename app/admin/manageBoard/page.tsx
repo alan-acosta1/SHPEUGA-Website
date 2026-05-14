@@ -16,6 +16,7 @@ type BoardMember = {
   title: string
   bio: string
   photo_url: string
+  order_index: number
   members: {
     first_name: string
     last_name: string
@@ -29,6 +30,7 @@ export default function ManageBoard() {
   const [title, setTitle] = useState("")
   const [bio, setBio] = useState("")
   const [loading, setLoading] = useState(true)
+  const [photo, setPhoto] = useState<File | null> (null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -46,9 +48,27 @@ export default function ManageBoard() {
   const addBoardMember = async () => {
     if (!selectedMember || !title) return
     const supabase = createClient()
+    let photo_url = ""
+    if(photo){
+      const fileExt = photo.name.split('.').pop()
+      const fileName = `${selectedMember}-${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase
+        .storage
+        .from('exec_photos')
+        .upload(fileName, photo)
+    console.log('upload error:', uploadError)
+    if (!uploadError) {
+      const { data } = supabase.storage.from('exec_photos').getPublicUrl(fileName)
+      photo_url = data.publicUrl
+      console.log('photo_url:', photo_url)
+    }else{
+      console.log('no photo selected')
+    }
+  }
+    
     const { data, error } = await supabase
       .from('execBoard')
-      .insert({ member_id: selectedMember, title, bio })
+      .insert({ member_id: selectedMember, title, bio, photo_url})
       .select('*, members(first_name, last_name)')
       .single()
 
@@ -57,6 +77,7 @@ export default function ManageBoard() {
       setSelectedMember("")
       setTitle("")
       setBio("")
+      setPhoto(null)
     }
   }
 
@@ -112,6 +133,16 @@ export default function ManageBoard() {
                 className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md text-gray-900"
                 rows={3}
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700">Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md text-gray-900"
+              />
+
             </div>
             <button
               onClick={addBoardMember}

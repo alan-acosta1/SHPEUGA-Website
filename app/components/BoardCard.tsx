@@ -33,7 +33,7 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
             </div>
             {isOpen && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-8 max-w-sm w-full shadow-xl">
+                <div className="bg-white rounded-lg p-8 max-w-lg w-full shadow-xl">
                 <Image 
                     src={photoUrl || "/images/shpelogo.png"} 
                     alt={name} 
@@ -41,7 +41,7 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
                     height={100} 
                     className="object-cover rounded-full mx-auto"
                 />
-                <h2 className="text-xl font-bold text-center mt-4">{name}</h2>
+                <h2 className="text-xl font-bold text-center mt-4 text-gray-900">{name}</h2>
                 <p className="text-center text-red-600 font-semibold mt-1">{position}</p>
                 <p className="text-gray-600 text-center mt-4">{bio}</p>
                 <button 

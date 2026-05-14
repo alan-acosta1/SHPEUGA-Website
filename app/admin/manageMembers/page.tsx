@@ -51,7 +51,7 @@ export default function ManageMembers() {
           </thead>
           <tbody>
             {members.map((member) => (
-              <tr key={member.id} className="hover:bg-gray-900">
+              <tr key={member.id} className="hover:bg-red-200">
                 <td className="p-4 border border-gray-900 text-gray-900">{member.first_name} {member.last_name}</td>
                 <td className="p-4 border border-gray-900 text-gray-900">{member.email}</td>
                 <td className="p-4 border border-gray-900 text-gray-900">{member.major}</td>

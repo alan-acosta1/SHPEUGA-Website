@@ -14,11 +14,11 @@ export default async function boardPage(){
     return(
         <main className="min-h-screen w-full bg-white flex flex-col items-center">
             <NavBar></NavBar>
-            <div className="w-full max-w-3xl flex flex-col items-center py-32 px-16">
+            <div className="w-full max-w-5xl flex flex-col items-center py-32 px-16">
                 <h1 className="text-center text-3xl text-black font-bold">
-                    The faces of UGA SHPE
+                    UGA SHPE Executive Board
                  </h1>
-                 <div className="grid grid-cols-4 gap-6">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
                     {data.map((member) =>(
                         <ExecCard
                             key = {member.id}
