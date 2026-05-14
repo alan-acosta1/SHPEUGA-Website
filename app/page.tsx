@@ -1,6 +1,6 @@
 import Image from "next/image";
 import NavBar from "./components/NavBar";
-
+import Footer from "./components/Footer";
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans ">
@@ -26,7 +26,10 @@ export default function Home() {
           <p className="max-w-md text-lg leading-8 text-black">I am currently working on making a discord server for announcements and updates.</p>
           <p className="max-w-md text-lg leading-8 text-black">As we work on this, please refer to resources under "Need Help?". I will keep adding more and more links as we go</p>
           </div>
+          <Footer/>
+  
       </main>
+    
     </div>
   );
 }

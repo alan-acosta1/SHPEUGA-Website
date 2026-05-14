@@ -1,5 +1,5 @@
 import NavBar from "../components/NavBar";
-
+import Footer from "../components/Footer";
 export default function EventPage() {
   return (
     <main className="min-h-screen w-full bg-white flex flex-col items-center">
@@ -14,6 +14,8 @@ export default function EventPage() {
           scrolling="no"
         />
       </div>
+      <Footer/>
+
     </main>
   )
 }

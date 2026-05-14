@@ -1,6 +1,7 @@
 import NavBar from "../components/NavBar";
 import ExecCard from "../components/BoardCard";
 import { createClient } from "@/utils/supabase/server";
+import Footer from "../components/Footer";
 export const revalidate = 3600
 export default async function boardPage(){
 
@@ -36,7 +37,8 @@ export default async function boardPage(){
 
 
 
-            </div>    
+            </div>   
+            <Footer/> 
            </main>
     )
 }

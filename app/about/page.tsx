@@ -1,4 +1,5 @@
 import NavBar from "../components/NavBar"
+import Footer from "../components/Footer"
 export default function AboutPage(){
 
 return(
@@ -8,7 +9,8 @@ return(
         <h1 className="text-center text-3xl text-black font-bold">
             About SHPE
         </h1>
-    </div>    
+    </div>
+    <Footer/>    
    </main>
 )
 }
