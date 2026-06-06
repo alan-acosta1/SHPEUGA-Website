@@ -34,27 +34,27 @@ const handleSignout = async () => {
 }
  
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-1 px-1 bg-white backdrop-blur-md border-b border-white/10">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-1 px-1 bg-orange-500 backdrop-blur-md border-b border-white/10">
             <a href="/">
-                <Image src="/images/shpelogo.png" alt="SHPE Logo" width={60} height={60} className="mr-2"/>
+                <Image src="/images/shpelogo2.png" alt="SHPE Logo" width={60} height={60} className="mr-2"/>
             </a>
             <div className="flex items-left gap-10">
-                <Link href="/board" className="text-black hover:text-red-500 transition-colors">Board</Link>
-                <Link href="/about" className="text-black hover:text-red-500 transition-colors">About</Link>
-                <Link href="/event" className="text-black hover:text-red-500 transition-colors">Events</Link>
+                <Link href="/board" className="text-black hover:text-white transition-colors">Board</Link>
+                <Link href="/about" className="text-black hover:text-white transition-colors">About</Link>
+                <Link href="/event" className="text-black hover:text-white transition-colors">Events</Link>
                 {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
-                <Link href="/resources" className="text-black hover:text-red-500 transition-colors">Need Help?</Link>
+                <Link href="/resources" className="text-black hover:text-white transition-colors">Need Help?</Link>
                 {role === 'exec' &&(
-                    <Link href="/admin" className="text-black hover:text-red-500 transition-colors">Admin page</Link>
+                    <Link href="/admin" className="text-black hover:text-white transition-colors">Admin page</Link>
                 )}
             </div>
             <div className="h-8 w-24">
                 {!loading &&(
                     user ? (
-                        <button className="border-solid border-white/20 bg-red-500  px-4 py-1 rounded-md hover:bg-black text-white transition-colors" 
+                        <button className="border-solid border-white/20 bg-blue-950  px-4 py-1 rounded-md hover:bg-black text-white transition-colors" 
                         onClick={handleSignout}>Sign Out</button>
                     ) : (
-                        <Link href="/login"><button className="border-solid border-white/20 bg-red-500  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
+                        <Link href="/login"><button className="border-solid border-white/20 bg-blue-950  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
                             Login</button></Link>
                     )
                 )}

@@ -30,7 +30,7 @@ export async function middleware(request: NextRequest) {
     const { data: member } = await supabase
       .from('members')
       .select('role')
-      .eq('id', user.id)
+      .eq('user_id', user.id)
       .single()
 
     if (!member || member.role !== 'exec') {

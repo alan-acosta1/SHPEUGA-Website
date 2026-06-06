@@ -10,6 +10,7 @@ export default function loginPage(){
             </h1>
         </div>
             <Login></Login> 
+            
        </main>
     )
 }
