@@ -34,16 +34,17 @@ const handleSignout = async () => {
 }
  
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-1 px-1 bg-orange-500 backdrop-blur-md border-b border-white/10">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-5 px-1 bg-blue-950 backdrop-blur-md border-b border-white/10">
             <a href="/">
-                <Image src="/images/shpelogo2.png" alt="SHPE Logo" width={60} height={60} className="mr-2"/>
+                <Image src="/images/shpe_whiteHorzi.png" alt="SHPE Logo" width={200} height={200} className="mr-2"/>
             </a>
-            <div className="flex items-left gap-10">
-                <Link href="/board" className="text-black hover:text-white transition-colors">Board</Link>
-                <Link href="/about" className="text-black hover:text-white transition-colors">About</Link>
-                <Link href="/event" className="text-black hover:text-white transition-colors">Events</Link>
+            <div className="flex items-center gap-10">
+                <Link href="/board" className="text-orange-500 hover:text-white transition-colors">Board</Link>
+                <Link href="/about" className="text-orange-500 hover:text-white transition-colors">About</Link>
+                <Link href="/event" className="text-orange-500 hover:text-white transition-colors">Events</Link>
+                <Link href="/sponsers" className="text-orange-500 hover:text-white transition-color">Sponsers</Link>
                 {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
-                <Link href="/resources" className="text-black hover:text-white transition-colors">Need Help?</Link>
+                {/*<Link href="/resources" className="text-black hover:text-white transition-colors">Need Help?</Link>*/}
                 {role === 'exec' &&(
                     <Link href="/admin" className="text-black hover:text-white transition-colors">Admin page</Link>
                 )}
