@@ -3,91 +3,76 @@
 import { createClient } from "@/utils/supabase/client"
 import { useEffect, useState } from "react"
 import NavBar from "../../components/NavBar"
+import { create } from "domain"
 
-type Member = {
-  id: string
-  first_name: string
-  last_name: string
-}
+
 
 type BoardMember = {
   id: string
-  member_id: string
+  name:string
   title: string
   bio: string
   photo_url: string
   order_index: number
-  members: {
-    first_name: string
-    last_name: string
-  }
 }
 
 export default function ManageBoard() {
   const [boardMembers, setBoardMembers] = useState<BoardMember[]>([])
-  const [members, setMembers] = useState<Member[]>([])
-  const [selectedMember, setSelectedMember] = useState("")
+  const [name, setName] = useState("")
   const [title, setTitle] = useState("")
   const [bio, setBio] = useState("")
   const [loading, setLoading] = useState(true)
   const [photo, setPhoto] = useState<File | null> (null)
 
-  useEffect(() => {
-    const supabase = createClient()
-
-    supabase.from('execBoard').select('*, members(first_name, last_name)').then(({ data }) => {
-      if (data) setBoardMembers(data)
-    })
-
-    supabase.from('members').select('id, first_name, last_name').then(({ data }) => {
-      if (data) setMembers(data)
+  useEffect(() =>{
+    const supabase = createClient();
+    supabase.from('execBoard').select('*').then(({data}) =>{
+      if(data) setBoardMembers(data)
       setLoading(false)
     })
-  }, [])
+  },[])
 
   const addBoardMember = async () => {
-    if (!selectedMember || !title) return
+    alert(`name: ${name}, title: ${title}, photo: ${photo?.name}`)
+    if (!name || !title) return
     const supabase = createClient()
     let photo_url = ""
     if(photo){
       const fileExt = photo.name.split('.').pop()
-      const fileName = `${selectedMember}-${Date.now()}.${fileExt}`
-      const { error: uploadError } = await supabase
+      const fileName = `${name.replace(' ', '-')}-${Date.now()}.${fileExt}`
+      const {error: uploadError} = await supabase
         .storage
         .from('exec_photos')
         .upload(fileName, photo)
-    console.log('upload error:', uploadError)
-    if (!uploadError) {
-      const { data } = supabase.storage.from('exec_photos').getPublicUrl(fileName)
-      photo_url = data.publicUrl
-      console.log('photo_url:', photo_url)
-    }else{
-      console.log('no photo selected')
+      alert(uploadError ? 'Upload failed: ' + uploadError.message : 'Upload succeeded!')
+      if (!uploadError){
+        const {data} = supabase.storage.from('exec_photos').getPublicUrl(fileName)
+        photo_url = data.publicUrl
+        console.log('photo_url: ', photo_url)
+      }else{
+        console.log('No photo selected')
+      }
     }
-  }
-    
-    const { data, error } = await supabase
+    const {data,error} = await supabase
       .from('execBoard')
-      .insert({ member_id: selectedMember, title, bio, photo_url})
-      .select('*, members(first_name, last_name)')
+      .insert({name,title,bio,photo_url})
+      .select('*')
       .single()
-
-    if (!error && data) {
+    if (!error && data){
       setBoardMembers([...boardMembers, data])
-      setSelectedMember("")
+      setName("")
       setTitle("")
       setBio("")
       setPhoto(null)
     }
   }
-
   const removeBoardMember = async (id: string) => {
     const supabase = createClient()
     await supabase.from('execBoard').delete().eq('id', id)
     setBoardMembers(boardMembers.filter(m => m.id !== id))
   }
+  if(loading) return <div className="pt-20 p-8">Loading</div>
 
-  if (loading) return <div className="pt-20 p-8">Loading...</div>
 
   return (
     <main className="min-h-screen w-full bg-white">
@@ -100,19 +85,15 @@ export default function ManageBoard() {
           <h2 className="text-xl font-bold mb-4 text-gray-900">Add Board Member</h2>
           <div className="flex flex-col gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Select Member</label>
-              <select
-                value={selectedMember}
-                onChange={(e) => setSelectedMember(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md text-gray-900"
-              >
-                <option value="">Select a member</option>
-                {members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.first_name} {m.last_name}
-                  </option>
-                ))}
-              </select>
+              <label className="text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder= "first and last"
+                className="w-full mt-1 px-4 py-2 border-gray-300 rounded-md text-gray-900"
+              />
+            
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700">Title</label>
@@ -139,7 +120,11 @@ export default function ManageBoard() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  console.log('file selected:', file)
+                  setPhoto(file || null)
+                }}
                 className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md text-gray-900"
               />
 
@@ -159,7 +144,7 @@ export default function ManageBoard() {
           {boardMembers.map((member) => (
             <div key={member.id} className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4">
               <div>
-                <p className="font-bold text-gray-900">{member.members.first_name} {member.members.last_name}</p>
+                <p className="font-bold text-gray-900">{member.name}</p>
                 <p className="text-red-600 text-sm">{member.title}</p>
                 <p className="text-gray-600 text-sm mt-1">{member.bio}</p>
               </div>

@@ -15,7 +15,7 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
         <>
             <div 
                 onClick={() => setIsOpen(true)}
-                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow w-64"
+                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow "
             >
                 <Image 
                 src={photoUrl || "/images/shpelogo.png" } 
