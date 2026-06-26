@@ -3,7 +3,7 @@ import { useState } from "react"
 import Image from "next/image"
 
 const slides = [
-  "/images/shpe_full.jpg",
+  "/images/shpeFront1.jpg",
   "/images/shpe_test.jpeg",
   "/images/shpe_full.jpg",
 ]
@@ -15,13 +15,14 @@ export default function Carousel() {
   const next = () => setCurrent((current + 1) % slides.length)
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden mt-16">
+    <div className="relative w-full h-[450px] overflow-hidden mt-16">
       {/* Image */}
-      <img
+      <Image
         src={slides[current]}
         alt="slide"
-        className="w-full h-full object-cover"
-        />
+        fill
+        className="object-cover object-center"
+      />
 
       {/* Left arrow */}
       <button

@@ -14,8 +14,8 @@ export default function Home() {
        
         {/*top of front page*/}
         <main className="flex-1 w-full ">
-          <Carousel/>
-          <div className="flex flex-col items-center justify-center pt-10 pb-20">
+          {/*<Carousel/>*/}
+          <div className="flex flex-col items-center justify-center pt-50 pb-20">
             <Image src="/images/shpe_horzi.png" alt="horzontal shpe logo" width={600} height={600}/>
           </div>
 
@@ -60,28 +60,63 @@ export default function Home() {
             </div>
             
             <div className="grid grid-cols-2 gap-6 justify-center pb-10">
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-90 h-80">
-                {/*<div className="w-24 h-24 bg-gray-500 rounded-full mb-4"/>*/}
+              
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+                <Image
+                  src="/images/shpeIndustry.jpg"
+                  alt="shpe industry photo"
+                  width={400}
+                  height={100}
+                  className="object-cover w-full h-48"
+                />  
+                <div className="p-4 text-center">
                 <p className="font-bold text-blue-950 mt-2">Industry Engagement</p>
                 <p className="text-sm text-blue-950 mt-2">Company info session and networking opportunities that connect students directly with recruiters and professionals</p>
+                </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-90 h-80">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+                <Image
+                  src="/images/shpeConf.jpg"
+                  alt="Shpe nationals photo"
+                  width={400}
+                  height={100}
+                  className="object-cover w-full h-48"
+                />
+                <div className="p-4 text-center">
                 <p className="font-bold text-blue-950 mt-2">Conferences & Leadership</p>
                 <p className="text-sm text-blue-950 mt-2">Members attend SHPE National Convention and regional events, building connections and gaining leadership experience</p>
+                </div>
               </div> 
 
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-90 h-80">
-                <p className="font-bold text-blue-950 mt-2">Career Development</p>
-                <p className="text-sm text-blue-950 mt-2">Resume workshops, portfolio building, and career fair preparation sessions that help members succeed professionally</p>
-
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+                <Image 
+                  src="/images/shpeCareer.jpg"
+                  alt="shpe career event"
+                  width={400}
+                  height={100}
+                  className="object-cover w-full h-48"
+                />
+                <div className="p-4 text-center">
+                  <p className="font-bold text-blue-950 mt-2">Career Development</p>
+                  <p className="text-sm text-blue-950 mt-2">Resume workshops, portfolio building, and career fair preparation sessions that help members succeed professionally</p>
+                </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-90 h-80">
-                <p className="font-bold text-blue-950 mt-2">Community & Events</p>
-                <p className="text-sm text-blue-950 mt-2">General body meetings, study sessions, and social events that create a strong and supportive community</p>
-
+              <div className="bg-white rounded-2xl shadow-md  flex flex-col  w-90 h-80">
+                <Image 
+                  src="/images/shpeCommunity.jpg" 
+                  alt="horzontal shpe logo" 
+                  width={400} 
+                  height={100}
+                  className="object-cover w-full h-48"
+                />
+                <div className="p-4 text-center">
+                  <p className="font-bold text-blue-950 mt-2">Community & Events</p>
+                  <p className="text-sm text-blue-950 mt-2">General body meetings, study sessions, and social events that create a strong and supportive community</p>
+                </div>
               </div>
+
             </div>
           </div>
         </main>
