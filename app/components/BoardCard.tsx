@@ -26,7 +26,7 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
                 />
                 <div className="p-4 text-center">
                 <p className="font-bold text-gray-900 text-lg">{name}</p>
-                <span className="inline-block mt-2 bg-red-600 text-white text-sm font-semibold px-4 py-1 rounded-full">
+                <span className="inline-block mt-2 bg-orange-600 text-white text-sm font-semibold px-4 py-1 rounded-full">
                     {position}
                 </span>
                 </div>

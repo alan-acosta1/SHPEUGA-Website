@@ -5,10 +5,14 @@ export default function AboutPage(){
 return(
    <main className="min-h-screen w-full bg-white flex flex-col items-center">
     <NavBar></NavBar>
-    <div className="w-full max-w-3xl flex flex-col items-center py-32 px-16">
-        <h1 className="text-center text-3xl text-black font-bold">
+    <div className="relative w-full h-110 flex items-start justify-center mt-15 pt-8" style={{backgroundImage: "url('/images/shpeGroup.jpg')",backgroundSize:'cover', backgroundPosition:'center'}}>
+        <div className="absolute inset-0 bg-black/30"/>
+        <h1 className="relative z-10 text-center text-5xl text-white font-bold">
             About SHPE UGA
         </h1>
+    </div>
+    <div className="w-full max-w-3xl flex flex-col items-center pt-8 pb-32 px-16">
+       
         <h2 className="text-center text-3xl text-orange-600 font-bold">Who we are</h2>
         <p className="text-blue-950">SHPE UGA is a student-led organization at the University of Georgia focused on empowering students in stem through community,professional development, and leadership</p>
         <p className="text-blue-950">We bring together students from diverse backgrounds to build connections, develop real-world skills, and prepare for careers in engineering,science, and technology</p>

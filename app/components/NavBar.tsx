@@ -52,10 +52,10 @@ const handleSignout = async () => {
             <div className="w-48 flex justify-end shrink-0">
                 {!loading &&(
                     user ? (
-                        <button className="border-solid border-white/20 bg-blue-950  px-4 py-1 rounded-md hover:bg-black text-white transition-colors" 
+                        <button className="border-solid border-white/20 bg-orange-600  px-4 py-1 rounded-md hover:bg-black text-white transition-colors" 
                         onClick={handleSignout}>Sign Out</button>
                     ) : (
-                        <Link href="/login"><button className="border-solid border-white/20 bg-blue-950  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
+                        <Link href="/login"><button className="border-solid border-white/20 bg-orange-600  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
                             Login</button></Link>
                     )
                 )}

@@ -15,7 +15,7 @@ export default function Home() {
         {/*top of front page*/}
         <main className="flex-1 w-full ">
           {/*<Carousel/>*/}
-          <div className="flex flex-col items-center justify-center pt-50 pb-20">
+          <div className="flex flex-col items-center justify-center pt-40 pb-20">
             <Image src="/images/shpe_horzi.png" alt="horzontal shpe logo" width={600} height={600}/>
           </div>
 
@@ -59,7 +59,7 @@ export default function Home() {
               <p className="font-bold text-blue-950 pb-5">From career development to national conferences, SHPE UGA provides opportunities that go beyond the classroom</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-6 justify-center pb-10">
+            <div className="grid grid-cols-2 gap-6 justify-center pb-32">
               
               <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
                 <Image
