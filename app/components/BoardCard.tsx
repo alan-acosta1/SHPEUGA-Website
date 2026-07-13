@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useState } from "react"
+import {X} from 'lucide-react'
 type BoardingCardProps = {
     name: string
     position: string
@@ -32,25 +33,27 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
                 </div>
             </div>
             {isOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-8 max-w-lg w-full shadow-xl">
-                <Image 
-                    src={photoUrl || "/images/shpelogo.png"} 
-                    alt={name} 
-                    width={100} 
-                    height={100} 
-                    className="object-cover rounded-full mx-auto"
-                />
-                <h2 className="text-xl font-bold text-center mt-4 text-gray-900">{name}</h2>
-                <p className="text-center text-red-600 font-semibold mt-1">{position}</p>
-                <p className="text-gray-600 text-center mt-4">{bio}</p>
-                <button 
-                    onClick={() => setIsOpen(false)}
-                    className="mt-6 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition-colors"
-                >
-                Close
-                </button>
-            </div>
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 ">
+                <div className="bg-white rounded-lg p-8 w-2/3 h-1/2  shadow-xl flex relative">
+                    <button 
+                        onClick={() => setIsOpen(false)}
+                        className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition-colors z-10">
+                        <X size={24}/>
+                    </button>
+                    <div className="w-1/3 shrink-0">
+                        <Image 
+                            src={photoUrl || "/images/shpelogo.png"} 
+                            alt={name} 
+                            width={300} 
+                            height={400} 
+                            className="object-cover rounded-full mx-auto"
+                        />
+                    </div>
+                    <div className="flex-1 p-8 flex flex-col">
+                            <p className="text-gray-600 ">Bio: {bio}</p>
+                    </div>
+                    
+                </div>
             </div>
             )}
             </>

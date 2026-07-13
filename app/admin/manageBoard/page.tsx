@@ -24,6 +24,9 @@ export default function ManageBoard() {
   const [loading, setLoading] = useState(true)
   const [photo, setPhoto] = useState<File | null> (null)
 
+  const [editingId, setEditingId] = useState<string | null >(null)
+  const [editBio, setEditBio] = useState("")
+
   useEffect(() =>{
     const supabase = createClient();
     supabase.from('execBoard').select('*').then(({data}) =>{
@@ -70,6 +73,30 @@ export default function ManageBoard() {
     const supabase = createClient()
     await supabase.from('execBoard').delete().eq('id', id)
     setBoardMembers(boardMembers.filter(m => m.id !== id))
+  }
+
+  const startEditingBio = (member: BoardMember) => {
+    setEditingId(member.id)
+    setEditBio(member.bio)
+  }
+
+  const cancelEditingBio = () =>{
+    setEditingId(null)
+    setEditBio("")
+  }
+  const saveBio = async(id:string) =>{
+    const supabase= createClient()
+    const {error} = await supabase
+      .from('execBoard')
+      .update({bio: editBio})
+      .eq('id',id)
+    if (!error){
+      setBoardMembers(boardMembers.map(m=> m.id === id ? {...m, bio: editBio} : m))
+      setEditingId(null)
+      setEditBio("")
+    }else{
+      alert('Failed to update bio: ' + error.message)
+    }
   }
   if(loading) return <div className="pt-20 p-8">Loading</div>
 
@@ -143,21 +170,54 @@ export default function ManageBoard() {
         <div className="flex flex-col gap-4">
           {boardMembers.map((member) => (
             <div key={member.id} className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-4">
-              <div>
+              <div className="flex-1">
                 <p className="font-bold text-gray-900">{member.name}</p>
                 <p className="text-red-600 text-sm">{member.title}</p>
-                <p className="text-gray-600 text-sm mt-1">{member.bio}</p>
+
+                {editingId === member.id ? (
+                  <div className="mt-2">
+                    <textarea
+                      value={editBio}
+                      onChange={(e) => setEditBio(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 text-sm"
+                      rows={3}
+                    />
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={() => saveBio(member.id)}
+                        className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 transition-colors text-sm">
+                        Save
+                      </button>
+                      <button
+                        onClick={cancelEditingBio}
+                        className="bg-gray-200 text-gray-700 px-4 py-1 rounded-md hover:bg-gray-300 transition-colors text-sm">
+                        Cacnel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-600 text-sm mt-1">{member.bio}</p>
+
+                  )}
               </div>
-              <button
-                onClick={() => removeBoardMember(member.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm"
-              >
-                Remove
-              </button>
+              <div className="flex flex-col gap-2 ml-4">
+                {editingId !== member.id && (
+                  <button
+                    onClick={() => startEditingBio(member)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                      Edit Bio
+                  </button>
+                )}
+                <button
+                  onClick={()=> removeBoardMember(member.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm">
+                    Remove
+                </button>
+               </div>
+              </div>  
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </main>
+          </main>
   )
 }

@@ -61,7 +61,7 @@ export default function Home() {
             
             <div className="grid grid-cols-2 gap-6 justify-center pb-32">
               
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
                 <Image
                   src="/images/shpeIndustry.jpg"
                   alt="shpe industry photo"
@@ -75,7 +75,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
                 <Image
                   src="/images/shpeConf.jpg"
                   alt="Shpe nationals photo"
@@ -89,7 +89,7 @@ export default function Home() {
                 </div>
               </div> 
 
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
                 <Image 
                   src="/images/shpeCareer.jpg"
                   alt="shpe career event"
@@ -103,7 +103,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md  flex flex-col  w-90 h-80">
+              <div className="bg-white rounded-2xl shadow-md  flex flex-col  w-90 h-80 overflow-hidden">
                 <Image 
                   src="/images/shpeCommunity.jpg" 
                   alt="horzontal shpe logo" 
