@@ -45,6 +45,9 @@ const handleSignout = async () => {
                 <Link href="/sponser" className="text-orange-500 hover:text-white transition-colors">Sponsers</Link>
                 {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
                 {/*<Link href="/resources" className="text-black hover:text-white transition-colors">Need Help?</Link>*/}
+                {user &&(
+                    <Link href="/profile" className="text-orange-500 hover:text-white transition-colors">Profile</Link>
+                )}
                 {role === 'exec' &&(
                     <Link href="/admin" className="text-black hover:text-white transition-colors">Admin page</Link>
                 )}

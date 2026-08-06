@@ -41,6 +41,11 @@ export default function SignUp(){
             setLoading(false);
             return;
         }
+        if(password.length < 8){
+            setError("Password must be at least 8 characters");
+            setLoading(false);
+            return;
+        }
         const supabase = createClient();
         const {data, error} = await supabase.auth.signUp({email,password});
         if(error){

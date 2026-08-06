@@ -31,13 +31,6 @@ export default async function adminMenu(){
       <p className="text-gray-600 mt-2">Add or remove exec board members</p>
     </div>
   </Link>
-
-  <Link href="/admin/manageEvents">
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
-      <h2 className="text-xl font-bold text-gray-900">Manage Events</h2>
-      <p className="text-gray-600 mt-2">Add, edit, or delete events</p>
-    </div>
-  </Link>
 </div>
     )
 
