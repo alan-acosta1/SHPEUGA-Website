@@ -1,31 +1,55 @@
-This is the private repository to work on the website before we publish it... Over time this will developed into something fantastic, but for now, we start fresh.
-See a log of each SHPE Bytes meeting and what we covered
+# SHPE UGA Website
 
-## Meeting 1 Oct. 15 2025
-Our goal was awareness of SHPEBytes and elaborate on what was expected to be achieved.
-We established our first project, the UGA SHPE Website.
+The official website for the Society of Hispanic Professional Engineers (SHPE) chapter at the University of Georgia, serving 70+ members.
+
+**Live site:** [shpeuga-website.vercel.app](https://shpeuga-website.vercel.app/)
+
+## Features
+
+- Public pages: about, events, sponsors, resources, exec board
+- Member authentication: sign-up, login, and password reset via Supabase Auth
+- Self-service member profiles
+- Role-based admin dashboard for managing members and exec board content, protected by Postgres Row-Level Security and Next.js middleware
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) (App Router) + React + TypeScript
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Supabase](https://supabase.com/) (Auth + Postgres)
+- Deployed on [Vercel](https://vercel.com/)
 
 ## Getting Started
 
-First, run the development server:
+Clone the repo and install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file in the project root with:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the result.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+- `app/` — pages and routes (Next.js App Router)
+- `app/components/` — shared UI components
+- `utils/supabase/` — Supabase client setup (browser, server, and middleware)
 
-To learn more about Next.js, take a look at the following resources:
+## SHPEBytes Meeting Log
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A log of each SHPEBytes meeting and what was covered.
+
+### Meeting 1 — Oct. 15, 2025
+Our goal was awareness of SHPEBytes and elaborating on what was expected to be achieved. We established our first project, the UGA SHPE Website.
