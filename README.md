@@ -15,7 +15,7 @@ The official website for the Society of Hispanic Professional Engineers (SHPE) c
 
 - [Next.js](https://nextjs.org/) (App Router) + React + TypeScript
 - [Tailwind CSS](https://tailwindcss.com/)
-- [Supabase](https://supabase.com/) (Auth + Postgres)
+- [Supabase](https://supabase.com/) (Auth + Postgres + RLS)
 - Deployed on [Vercel](https://vercel.com/)
 
 ## Getting Started
