@@ -2,8 +2,7 @@ This is the SHPE website for the UGA Chapter. We are still in early stages of th
 See a log of each SHPE Bytes meeting and what we covered
 
 ## Techstack
-Our goal was awareness of SHPEBytes and elaborate on what was expected to be achieved.
-We established our first project, the UGA SHPE Website.
+Next,js 16, React, TypeScript, Tailwind CSS, Supabase(Auth + Postgres + RLS), deployed on Vercel
 
 ## Getting Started
 
