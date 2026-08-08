@@ -63,7 +63,7 @@ export default function Home() {
               
               <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
                 <Image
-                  src="/images/shpeIndustry.jpg"
+                  src="/images/shpeIndustry.JPG"
                   alt="shpe industry photo"
                   width={400}
                   height={100}
