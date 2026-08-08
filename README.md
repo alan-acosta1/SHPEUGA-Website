@@ -1,7 +1,7 @@
-This is the private repository to work on the website before we publish it... Over time this will developed into something fantastic, but for now, we start fresh.
+This is the SHPE website for the UGA Chapter. We are still in early stages of the website since it is only me working on the website. The website should help UGA students learn more about SHPE uga.
 See a log of each SHPE Bytes meeting and what we covered
 
-## Meeting 1 Oct. 15 2025
+## Techstack
 Our goal was awareness of SHPEBytes and elaborate on what was expected to be achieved.
 We established our first project, the UGA SHPE Website.
 
