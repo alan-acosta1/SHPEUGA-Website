@@ -2,7 +2,7 @@
 
 The official website for the Society of Hispanic Professional Engineers (SHPE) chapter at the University of Georgia, serving 70+ members.
 
-**Live site:** [shpeuga-website.vercel.app](https://shpeuga-website.vercel.app/)
+**Live site:** [shpeuga.com](https://shpeuga.com/)
 
 ## Features
 
@@ -10,6 +10,7 @@ The official website for the Society of Hispanic Professional Engineers (SHPE) c
 - Member authentication: sign-up, login, and password reset via Supabase Auth
 - Self-service member profiles
 - Role-based admin dashboard for managing members and exec board content, protected by Postgres Row-Level Security and Next.js middleware
+- Auto-generated `sitemap.xml` and `robots.txt` for SEO
 
 ## Tech Stack
 
@@ -45,6 +46,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 
 - `app/` — pages and routes (Next.js App Router)
 - `app/components/` — shared UI components
+- `app/sitemap.ts` / `app/robots.ts` — SEO metadata routes served at `/sitemap.xml` and `/robots.txt`
 - `utils/supabase/` — Supabase client setup (browser, server, and middleware)
 
 ## SHPEBytes Meeting Log
