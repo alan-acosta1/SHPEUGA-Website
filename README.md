@@ -9,7 +9,8 @@ The official website for the Society of Hispanic Professional Engineers (SHPE) c
 - Public pages: about, events, sponsors, resources, exec board
 - Member authentication: sign-up, login, and password reset via Supabase Auth
 - Self-service member profiles
-- Role-based admin dashboard for managing members and exec board content, protected by Postgres Row-Level Security and Next.js middleware
+- Role-based admin dashboard for managing members, protected by Postgres Row-Level Security and Next.js middleware
+- Hardcoded executive board cards maintained in `app/board/members.ts`
 - Auto-generated `sitemap.xml` and `robots.txt` for SEO
 
 ## Tech Stack
@@ -48,6 +49,17 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 - `app/components/` — shared UI components
 - `app/sitemap.ts` / `app/robots.ts` — SEO metadata routes served at `/sitemap.xml` and `/robots.txt`
 - `utils/supabase/` — Supabase client setup (browser, server, and middleware)
+
+## Updating the Executive Board
+
+Edit `app/board/members.ts` to add, remove, or update a board member's name,
+position, photo, or bio. The array order controls the order of the cards.
+The board page no longer reads the `execBoard` database table or uses an admin editor.
+
+Existing photos still use their public Supabase Storage URLs. For new local photos,
+add the file to `public/images/` and use a path such as `/images/name.jpg` for
+`photoUrl`. An empty `photoUrl` uses the SHPE logo. New external image hosts must
+be allowed in `next.config.ts`.
 
 ## SHPEBytes Meeting Log
 
