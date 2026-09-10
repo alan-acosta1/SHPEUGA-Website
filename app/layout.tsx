@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "UGA SHPE",
-  description: "SHPE at UGA Website",
+  description: "Find community, build your skills, and explore opportunities with the Society of Hispanic Professional Engineers at the University of Georgia.",
 };
 
 export default function RootLayout({

@@ -50,6 +50,31 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 - `app/sitemap.ts` / `app/robots.ts` — SEO metadata routes served at `/sitemap.xml` and `/robots.txt`
 - `utils/supabase/` — Supabase client setup (browser, server, and middleware)
 
+## Previewing the Website Redesign
+
+The visual redesign lives on `codex/website-redesign`. The approved original
+design remains on `Main`.
+
+To run the redesign locally:
+
+```bash
+git switch codex/website-redesign
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). To return to the original,
+stop the development server, switch to `Main`, and restart it:
+
+```bash
+git switch Main
+npm run dev
+```
+
+Commit or stash any new local edits before switching branches. Both branches
+use the same local `.env` configuration. The redesign changes the presentation
+of the public pages and member forms; it keeps Supabase authentication, member
+management, board content, and the embedded chapter calendar.
+
 ## Updating the Executive Board
 
 Edit `app/board/members.ts` to add, remove, or update a board member's name,

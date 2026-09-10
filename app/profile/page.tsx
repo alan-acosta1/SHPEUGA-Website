@@ -1,17 +1,6 @@
-import NavBar from "../components/NavBar";
 import Profile from "../components/Profile";
+import AccountLayout from "../components/AccountLayout";
 
-export default function ProfilePage(){
-    return(
-        <main className="min-h-screen w-full bg-white flex flex-col items-center">
-        <NavBar></NavBar>
-        <div className="pt-28">
-            <h1 className="text-blue-950 text-3xl font-bold text-center mt-8 mb-4">
-                My Profile
-            </h1>
-        </div>
-            <Profile></Profile>
-
-       </main>
-    )
+export default function ProfilePage() {
+    return <AccountLayout title="Make yourself at home." description="Keep your member profile up to date."><Profile /></AccountLayout>;
 }

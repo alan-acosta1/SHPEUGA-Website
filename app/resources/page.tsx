@@ -1,28 +1,27 @@
-import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
+import PageIntro from "../components/PageIntro";
 
-export default function page() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans ">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white shadow-xl sm:items-start">
-        <NavBar/>
-        <div className="flex flex-col items-center p-20 gap-6 text-center sm:items-start shadow-xl shadow-red-500 sm:text-left">
-          <p className="max-w-md text-lg leading-8 text-black">
-            Looking for a starting point or more instructions?
-          </p>
-          <p className="max-w-md text-lg leading-8 text-black">
-            For styling check out</p>
-            <u>
-              <a className= " border-solid text-black hover:text-red-500 transition-colors"href="https://tailwindcss.com/docs/installation/using-vite">Tailwind CSS Docs </a>
-            </u>
-          <p className="max-w-md text-lg leading-8 text-black">
-            For components:</p>
-            <u>
-              <a className= " border-solid text-black hover:text-red-500 transition-colors"href="https://nextjs.org/docs/app/getting-started">Next.js Docs </a>
-            </u>
-          
-          </div>
-      </main>
-    </div>
-  );
+export default function ResourcesPage() {
+    return (
+        <div className="site-shell">
+            <NavBar />
+            <main>
+                <PageIntro label="SHPEBytes resources" title={<>Keep learning.<br />Keep building.</>} description="Working on the chapter website? Start with the documentation for the tools behind it." />
+                <div className="site-container grid gap-6 py-12 md:grid-cols-2 md:py-16">
+                    {[
+                        ["Tailwind CSS", "Explore utility classes, styling, and responsive layouts.", "https://tailwindcss.com/docs/installation/using-vite"],
+                        ["Next.js", "Learn about components, routing, and the application framework.", "https://nextjs.org/docs/app/getting-started"],
+                    ].map(([title, description, href]) => (
+                        <a key={title} href={href} target="_blank" rel="noopener noreferrer" className="group rounded border border-[#e2e6ec] p-8 transition-colors hover:bg-[#f3f5f8]">
+                            <div className="flex items-center justify-between gap-4"><h2 className="text-2xl font-semibold tracking-tight">{title}</h2><ArrowUpRight size={22} className="text-[#b54413]" /></div>
+                            <p className="body-copy mt-4">{description}</p>
+                        </a>
+                    ))}
+                </div>
+            </main>
+            <Footer />
+        </div>
+    );
 }

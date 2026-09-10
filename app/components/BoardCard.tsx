@@ -1,78 +1,53 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { useState } from "react"
-import {X} from 'lucide-react'
-type BoardingCardProps = {
-    name: string
-    position: string
-    photoUrl: string
-    bio: string
-}
+import Image from "next/image";
+import { useId, useRef } from "react";
+import { ArrowUpRight, X } from "lucide-react";
 
-export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps){
-    const [isOpen, setIsOpen] = useState(false)
-    return(
+type BoardCardProps = {
+    name: string;
+    position: string;
+    photoUrl: string;
+    bio: string;
+};
+
+export default function ExecCard({ name, position, photoUrl, bio }: BoardCardProps) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const titleId = useId();
+
+    return (
         <>
-            <div 
-                onClick={() => setIsOpen(true)}
-                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow "
-            >
-                <Image 
-                src={photoUrl || "/images/shpelogo.png" } 
-                alt={name} 
-                width={300} 
-                height={400} 
-                className="object-cover w-full h-72"
-                />
-                <div className="p-4 text-center">
-                <p className="font-bold text-gray-900 text-lg">{name}</p>
-                <span className="inline-block mt-2 bg-orange-600 text-white text-sm font-semibold px-4 py-1 rounded-full">
-                    {position}
-                </span>
+            <button type="button" className="board-card group" onClick={() => dialogRef.current?.showModal()} aria-label={"Meet " + name + ", " + position} aria-haspopup="dialog">
+                <div className="board-card-photo">
+                    <Image src={photoUrl || "/images/shpelogo.png"} alt={name} fill sizes="(max-width: 380px) 100vw, (max-width: 767px) 50vw, (max-width: 1100px) 33vw, 25vw" className="object-cover" />
+                    <span className="board-card-open" aria-hidden="true"><ArrowUpRight size={18} /></span>
                 </div>
-            </div>
-            {isOpen && (
-            <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="bg-white rounded-2xl p-8 w-2/3 h-1/2 shadow-2xl ring-1 ring-black/5 flex relative font-sans">
-                    <button 
-                        onClick={() => setIsOpen(false)}
-                        aria-label="Close board member popup"
-                        className="absolute top-3 right-3 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-orange-600 transition-colors z-10">
-                        <X size={20}/>
+                <div className="pt-5">
+                    <h3 className="text-lg font-semibold tracking-tight transition-colors group-hover:text-[#b54413] md:text-xl">{name}</h3>
+                    <p className="mt-1 text-sm leading-6 text-[#5e6878]">{position}</p>
+                </div>
+            </button>
+            <dialog ref={dialogRef} aria-labelledby={titleId} className="board-dialog">
+                <div className="board-dialog-layout">
+                    <button type="button" onClick={() => dialogRef.current?.close()} aria-label="Close board member popup" className="absolute right-3 top-3 z-10 rounded-full bg-white p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900">
+                        <X size={20} />
                     </button>
-                    <div className="relative w-1/3 h-full min-h-0 shrink-0 overflow-hidden rounded-full">
-                        <Image 
-                            src={photoUrl || "/images/shpelogo.png"} 
-                            alt={name} 
-                            fill
-                            sizes="22vw"
-                            className="object-cover"
-                        />
+                    <div className="board-dialog-photo">
+                        <Image src={photoUrl || "/images/shpelogo.png"} alt={name} fill sizes="(max-width: 767px) 180px, 22vw" className="object-cover" />
                     </div>
-                    <div className="min-w-0 flex-1 px-8 lg:px-10 py-4 flex flex-col overflow-y-auto">
-                        <p className="text-[10px] lg:text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                            UGA SHPE · Executive Board
-                        </p>
-                        <h2 className="mt-3 text-2xl lg:text-4xl font-semibold tracking-tight leading-tight text-slate-900 break-words">
-                            {name}
-                        </h2>
-                        <p className="mt-2 text-sm lg:text-base font-medium text-orange-700">
-                            {position}
-                        </p>
+                    <div className="board-dialog-copy">
+                        <p className="eyebrow text-slate-500">UGA SHPE · Executive Board</p>
+                        <h2 id={titleId} className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-slate-900 lg:text-4xl">{name}</h2>
+                        <p className="mt-2 text-base font-medium text-orange-700">{position}</p>
                         {bio.trim() && (
                             <>
                                 <div className="my-5 h-1 w-10 shrink-0 rounded-full bg-orange-500" />
-                                <p className="text-sm lg:text-base leading-relaxed text-slate-600 whitespace-pre-line break-words">
-                                    {bio}
-                                </p>
+                                <p className="whitespace-pre-line break-words text-base leading-relaxed text-slate-600">{bio}</p>
                             </>
                         )}
                     </div>
-                    
                 </div>
-            </div>
-            )}
-            </>
-)
+            </dialog>
+        </>
+    );
 }
