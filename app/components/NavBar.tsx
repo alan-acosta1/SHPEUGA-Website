@@ -1,70 +1,106 @@
-"use client"
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
-
+const links = [
+    { href: "/board", label: "Board" },
+    { href: "/about", label: "About" },
+    { href: "/event", label: "Events" },
+    { href: "/sponser", label: "Sponsors" },
+];
 
 export default function NavBar() {
-const [user,setUser] = useState<any>(null);
-const router = useRouter();
-const [loading, setLoading] = useState(true);
-//const [role, setRole] = useState<string | null>(null)
-const {role} = useAuth();
-useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({data}) =>{
-        setUser(data.user)
-        setLoading(false)
-    })
-},[])
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [signingOut, setSigningOut] = useState(false);
+    const headerRef = useRef<HTMLElement>(null);
+    const toggleRef = useRef<HTMLButtonElement>(null);
+    const router = useRouter();
+    const pathname = usePathname();
+    const { role } = useAuth();
 
+    useEffect(() => {
+        const supabase = createClient();
+        supabase.auth.getUser().then(({ data }) => {
+            setUser(data.user);
+            setLoading(false);
+        });
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+            setLoading(false);
+        });
+        return () => subscription.unsubscribe();
+    }, []);
 
+    useEffect(() => {
+        if (!menuOpen) return;
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setMenuOpen(false);
+                toggleRef.current?.focus();
+            }
+        };
+        const onPointerDown = (event: PointerEvent) => {
+            if (event.target instanceof Node && !headerRef.current?.contains(event.target)) setMenuOpen(false);
+        };
+        const desktop = window.matchMedia("(min-width: 1280px)");
+        const onResize = () => { if (desktop.matches) setMenuOpen(false); };
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("pointerdown", onPointerDown);
+        desktop.addEventListener("change", onResize);
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            document.removeEventListener("pointerdown", onPointerDown);
+            desktop.removeEventListener("change", onResize);
+        };
+    }, [menuOpen]);
 
+    const handleSignout = async () => {
+        setSigningOut(true);
+        const { error } = await createClient().auth.signOut();
+        setSigningOut(false);
+        if (!error) {
+            setUser(null);
+            setMenuOpen(false);
+            router.push("/");
+            router.refresh();
+        }
+    };
+    const navigation = [...links, ...(user ? [{ href: "/profile", label: "Profile" }] : []), ...(user && role === "exec" ? [{ href: "/admin", label: "Admin page" }] : [])];
+    const accountAction = !loading && (user ? (
+        <button type="button" disabled={signingOut} onClick={handleSignout} className="min-h-11 rounded-md bg-orange-600 px-4 py-2 text-white transition-colors hover:bg-black disabled:opacity-50">
+            {signingOut ? "Signing out…" : "Sign Out"}
+        </button>
+    ) : (
+        <Link href="/login" onClick={() => setMenuOpen(false)} className="inline-flex min-h-11 items-center justify-center rounded-md bg-orange-600 px-4 py-2 text-white transition-colors hover:bg-black">Login</Link>
+    ));
 
-const handleSignout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    setUser(null)
-    //setRole(null)
-    router.push('/')
-}
- 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-5 px-1 bg-blue-950 backdrop-blur-md border-b border-white/10">
-            <Link href="/" className="w-48 shrink-0">
-                <Image src="/images/shpe_whiteHorzi.png" alt="SHPE Logo" width={200} height={200} className="mr-2"/>
-            </Link>
-            <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-10">
-                <Link href="/board" className="text-orange-500 hover:text-white transition-colors">Board</Link>
-                <Link href="/about" className="text-orange-500 hover:text-white transition-colors">About</Link>
-                <Link href="/event" className="text-orange-500 hover:text-white transition-colors">Events</Link>
-                <Link href="/sponser" className="text-orange-500 hover:text-white transition-colors">Sponsers</Link>
-                {/*<Link href="/contact" className="text-black hover:text-red-500 transition-colors">Contact</Link>*/}
-                {/*<Link href="/resources" className="text-black hover:text-white transition-colors">Need Help?</Link>*/}
-                {user &&(
-                    <Link href="/profile" className="text-orange-500 hover:text-white transition-colors">Profile</Link>
-                )}
-                {role === 'exec' &&(
-                    <Link href="/admin" className="text-black hover:text-white transition-colors">Admin page</Link>
-                )}
-            </div>
-            <div className="w-48 flex justify-end shrink-0">
-                {!loading &&(
-                    user ? (
-                        <button className="border-solid border-white/20 bg-orange-600  px-4 py-1 rounded-md hover:bg-black text-white transition-colors" 
-                        onClick={handleSignout}>Sign Out</button>
-                    ) : (
-                        <Link href="/login"><button className="border-solid border-white/20 bg-orange-600  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">
-                            Login</button></Link>
-                    )
-                )}
-                
-            </div>
-         
-        </nav>
+        <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-blue-950 backdrop-blur-md">
+            <nav aria-label="Main navigation" className="flex h-[76px] items-center justify-between gap-4 px-4 xl:h-[88px] xl:px-5">
+                <Link href="/" aria-label="UGA SHPE home" onClick={() => setMenuOpen(false)} className="flex min-h-11 w-44 shrink-0 items-center xl:w-48">
+                    <Image src="/images/shpe_whiteHorzi.png" alt="SHPE Logo" width={200} height={54} className="h-auto w-full" priority />
+                </Link>
+                <div className="hidden items-center gap-8 xl:flex">
+                    {navigation.map(link => <Link key={link.href} href={link.href} aria-current={pathname === link.href ? "page" : undefined} className="flex min-h-11 items-center text-orange-500 transition-colors hover:text-white">{link.label}</Link>)}
+                </div>
+                <div className="hidden w-48 justify-end xl:flex">{accountAction}</div>
+                <button ref={toggleRef} type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="mobile-navigation" className="flex size-11 items-center justify-center rounded-md text-white xl:hidden">
+                    {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+                </button>
+            </nav>
+            {menuOpen && <nav id="mobile-navigation" aria-label="Mobile navigation" className="mobile-navigation overflow-y-auto overscroll-contain border-t border-white/10 px-4 py-4 xl:hidden">
+                {navigation.map(link => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)} aria-current={pathname === link.href ? "page" : undefined} className="block border-b border-white/10 py-3 text-orange-500 hover:text-white">{link.label}</Link>)}
+                <div className="mt-4 flex flex-col">{accountAction}</div>
+            </nav>}
+        </header>
     );
 }

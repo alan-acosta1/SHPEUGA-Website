@@ -17,7 +17,7 @@ export default async function adminMenu(){
 
 
     return(
-    <div className="grid grid-cols-3 gap-6 mt-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 px-4 sm:px-8">
   <Link href="/admin/manageMembers">
     <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
       <h2 className="text-xl font-bold text-gray-900">Manage Members</h2>

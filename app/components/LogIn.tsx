@@ -27,8 +27,8 @@ export default function Login(){
 
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+        <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">
+            <div className="w-full max-w-md p-5 sm:p-8 bg-white rounded-lg shadow-md">
                 {/*<h1 className="text-2xl font-bold text-center mb-6 text-gray-950">LogIn</h1>*/}
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
@@ -38,6 +38,7 @@ export default function Login(){
                         <label className="text-sm font-medium text-gray-700">UGA Email</label>
                         <input
                             type="email"
+                            autoComplete="email" autoCapitalize="none" spellCheck={false}
                             value={email}
                             onChange={(e)=> setEmail(e.target.value)}
                             placeholder="you@uga.edu"
@@ -48,6 +49,7 @@ export default function Login(){
                         <label className="text-sm font-medium text-gray-700">Password</label>
                         <input
                             type="password"
+                            autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="******"

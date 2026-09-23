@@ -2,7 +2,6 @@ import Image from "next/image";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Link from "next/link";
-import Carousel from "./components/ImageSlide";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import {FaHandshakeSimple} from "react-icons/fa6";
@@ -15,38 +14,36 @@ export default function Home() {
         {/*top of front page*/}
         <main className="flex-1 w-full ">
           {/*<Carousel/>*/}
-          <div className="flex flex-col items-center justify-center pt-40 pb-20">
-            <Image src="/images/shpe_horzi.png" alt="horzontal shpe logo" width={600} height={600}/>
+          <div className="flex flex-col items-center justify-center px-4 pt-28 pb-10 md:pt-40 md:pb-20">
+            <Image src="/images/shpe_horzi.png" alt="horzontal shpe logo" width={600} height={600} priority className="h-auto w-full max-w-[600px]"/>
           </div>
 
-          <div className="flex flex-col items-center">
-            <h1 className=" text-blue-950 font-bold pb-5">
+          <div className="flex w-full flex-col items-center px-4 text-center">
+            <h1 className=" text-center text-blue-950 font-bold pb-5">
               Empowering the next generation of engineers
             </h1>
-            <Link href="/login">
-              <button 
-              className="border-solid border-white/20 bg-orange-700  px-4 py-1 rounded-md hover:bg-black text-white transition-colors">Join SHPE UGA
-              </button>
+            <Link href="/login"
+              className="inline-flex min-h-11 items-center border-solid border-white/20 bg-orange-700 px-4 py-2 rounded-md hover:bg-black text-white transition-colors">Join SHPE UGA
             </Link>  
 
             {/* Our impact section */}
-            <h1 className="text-orange-600 font-bold pt-10 text-5xl">
+            <h1 className="text-orange-600 font-bold pt-10 text-4xl sm:text-5xl">
               Our Impact
             </h1>
             <p className="text-blue-950 font-bold pb-5">Connecting students with opportunities, community, and industry at UGA </p>
-            <div className="flex gap-6 justify-center pb-10">
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-72 h-80">
+            <div className="grid w-full max-w-[912px] grid-cols-1 gap-6 justify-items-center pb-10 md:grid-cols-3">
+              <div className="bg-white rounded-2xl shadow-md p-6 lg:p-8 flex flex-col items-center justify-center w-full max-w-72 min-h-72 md:min-h-80">
                 <FaUser className="text-blue-900 w-24 h-24"/>
                 <p className="text-6xl font-bold text-orange-600 mt-2">160+</p>
                 <p className="text-xl font-bold text-gray-800 text-center mt-3">Students Engaged</p>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-72 h-80">
+              <div className="bg-white rounded-2xl shadow-md p-6 lg:p-8 flex flex-col items-center justify-center w-full max-w-72 min-h-72 md:min-h-80">
                 <FaCalendarAlt className="text-blue-900 w-24 h-24"/>
                 <p className="text-6xl font-bold text-orange-600 mt-2">25+</p>
                 <p className="text-xl font-bold text-gray-800 text-center mt-3">Professional & Social Events</p>
               </div>
-              <div className="bg-white rounded-2xl shadow-md p-8 flex flex-col items-center justify-center w-72 h-80">
+              <div className="bg-white rounded-2xl shadow-md p-6 lg:p-8 flex flex-col items-center justify-center w-full max-w-72 min-h-72 md:min-h-80">
                 <FaHandshakeSimple className="text-blue-900 w-24 h-24"/>
                 <p className="text-6xl font-bold text-orange-600 mt-2">6+</p>
                 <p className="text-xl font-bold text-gray-800 text-center mt-3">Industry Partners</p>
@@ -55,18 +52,19 @@ export default function Home() {
 
             {/*experience section */}
             <div className="flex flex-col items-center">
-              <h1 className="font-bold text-orange-600 text-5xl">Experience SHPE UGA</h1>
+              <h1 className="font-bold text-orange-600 text-3xl sm:text-5xl">Experience SHPE UGA</h1>
               <p className="font-bold text-blue-950 pb-5">From career development to national conferences, SHPE UGA provides opportunities that go beyond the classroom</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-6 justify-center pb-32">
+            <div className="grid w-full max-w-[744px] grid-cols-1 gap-6 justify-center pb-16 sm:grid-cols-2 md:pb-32">
               
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-full min-h-80 overflow-hidden">
                 <Image
                   src="/images/shpeIndustry.JPG"
                   alt="shpe industry photo"
                   width={400}
                   height={100}
+                  sizes="(max-width: 639px) calc(100vw - 32px), 360px"
                   className="object-cover w-full h-48"
                 />  
                 <div className="p-4 text-center">
@@ -75,12 +73,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-full min-h-80 overflow-hidden">
                 <Image
                   src="/images/shpeConf.jpg"
                   alt="Shpe nationals photo"
                   width={400}
                   height={100}
+                  sizes="(max-width: 639px) calc(100vw - 32px), 360px"
                   className="object-cover w-full h-48"
                 />
                 <div className="p-4 text-center">
@@ -89,12 +88,13 @@ export default function Home() {
                 </div>
               </div> 
 
-              <div className="bg-white rounded-2xl shadow-md flex flex-col w-90 h-80 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-md flex flex-col w-full min-h-80 overflow-hidden">
                 <Image 
                   src="/images/shpeCareer.jpg"
                   alt="shpe career event"
                   width={400}
                   height={100}
+                  sizes="(max-width: 639px) calc(100vw - 32px), 360px"
                   className="object-cover w-full h-48"
                 />
                 <div className="p-4 text-center">
@@ -103,12 +103,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-md  flex flex-col  w-90 h-80 overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-md  flex flex-col w-full min-h-80 overflow-hidden">
                 <Image 
                   src="/images/shpeCommunity.jpg" 
                   alt="horzontal shpe logo" 
                   width={400} 
                   height={100}
+                  sizes="(max-width: 639px) calc(100vw - 32px), 360px"
                   className="object-cover w-full h-48"
                 />
                 <div className="p-4 text-center">

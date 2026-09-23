@@ -62,8 +62,8 @@ export default function ResetPassword(){
 
    if (!sessionReady) {
       return (
-         <div className="flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+         <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">
+            <div className="w-full max-w-md p-5 sm:p-8 bg-white rounded-lg shadow-md">
                <p className="text-center text-gray-600">
                   Verifying reset link...
                </p>
@@ -73,8 +73,8 @@ export default function ResetPassword(){
    }
 
    return (
-      <div className="flex flex-col items-center justify-center">
-         <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+      <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">
+         <div className="w-full max-w-md p-5 sm:p-8 bg-white rounded-lg shadow-md">
             {error && (
                <p className="text-red-500 text-sm text-center mb-6">{error}</p>
             )}
@@ -86,6 +86,7 @@ export default function ResetPassword(){
                   <label className="text-sm font-medium text-gray-700">New Password</label>
                   <input
                      type="password"
+                            autoComplete="new-password"
                      value={newPassword}
                      onChange={(e) => setNewPassword(e.target.value)}
                      placeholder="******"
@@ -96,6 +97,7 @@ export default function ResetPassword(){
                   <label className="text-sm font-medium text-gray-700">Confirm Password</label>
                   <input
                      type="password"
+                            autoComplete="new-password"
                      value={confirmPassword}
                      onChange={(e) => setConfirmPassword(e.target.value)}
                      placeholder="******"

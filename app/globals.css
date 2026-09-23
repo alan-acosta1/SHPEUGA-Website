@@ -24,3 +24,37 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Responsive behavior for the original chapter website. */
+html { scroll-padding-top: 100px; }
+:focus-visible { outline: 3px solid #ea580c; outline-offset: 3px; }
+.mobile-navigation { max-height: calc(100dvh - 76px); padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+.member-form input, .member-form select, .member-form textarea { min-width: 0; min-height: 48px; font-size: 16px; scroll-margin-block: 100px 24px; }
+.member-form button[type="submit"], .member-form a { min-height: 44px; }
+.member-form a { display: inline-flex; align-items: center; }
+.board-dialog { margin: auto; padding: 0; border: 0; width: calc(100% - 32px); max-width: 640px; max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+.board-dialog::backdrop { background: #02061799; backdrop-filter: blur(6px); }
+.board-dialog-layout { flex-direction: column; align-items: center; gap: 24px; }
+.board-dialog-photo { width: 160px; height: 200px; }
+.board-dialog-copy { width: 100%; }
+body:has(.board-dialog[open]) { overflow: hidden; }
+.member-table th { color: white; }
+.member-table td { overflow-wrap: anywhere; }
+.member-table select { min-height: 44px; max-width: 100%; font-size: 16px; }
+@media (min-width: 1024px) {
+  .board-dialog { width: 66.666667%; max-width: none; height: 50dvh; max-height: 90dvh; }
+  .board-dialog-layout { height: 100%; flex-direction: row; align-items: stretch; gap: 0; }
+  .board-dialog-photo { width: 33.333333%; height: 100%; }
+  .board-dialog-copy { padding: 16px 40px; overflow-y: auto; }
+}
+@media (max-width: 767px) {
+  .member-table, .member-table tbody { display: block; }
+  .member-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .member-table tr { display: block; margin-bottom: 16px; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; }
+  .member-table td { display: grid; grid-template-columns: 4rem minmax(0, 1fr); align-items: center; gap: 12px; padding: 12px 0; border: 0; }
+  .member-table td + td { border-top: 1px solid #e5e7eb; }
+  .member-table td::before { content: attr(data-label); color: #4b5563; font-size: 14px; font-weight: 600; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

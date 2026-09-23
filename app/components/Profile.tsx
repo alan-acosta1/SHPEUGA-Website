@@ -84,8 +84,8 @@ export default function Profile(){
     if (!member) return <div className="pt-20 p-8 text-center text-gray-600">Profile not found</div>
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+        <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">
+            <div className="w-full max-w-md p-5 sm:p-8 bg-white rounded-lg shadow-md">
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
                 )}
@@ -97,6 +97,7 @@ export default function Profile(){
                         <label className="text-sm font-medium text-gray-700">First Name</label>
                         <input
                             type="text"
+                            autoComplete="given-name"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900"
@@ -106,6 +107,7 @@ export default function Profile(){
                         <label className="text-sm font-medium text-gray-700">Last Name</label>
                         <input
                             type="text"
+                            autoComplete="family-name"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900"
@@ -124,6 +126,7 @@ export default function Profile(){
                         <label className="text-sm font-medium text-gray-700">Year</label>
                         <input
                             type="text"
+                            inputMode="numeric" maxLength={1}
                             value={year}
                             onChange={(e) => setYear(e.target.value.replace(/[^0-9]/g, ""))}
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900"
@@ -133,6 +136,7 @@ export default function Profile(){
                         <label className="text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
+                            autoComplete="email" autoCapitalize="none" spellCheck={false}
                             value={member.email}
                             disabled
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"

@@ -62,8 +62,8 @@ export default function SignUp(){
         }
     }
     return(
-        <div className="flex flex-col items-center justify-center">
-            <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+        <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">
+            <div className="w-full max-w-md p-5 sm:p-8 bg-white rounded-lg shadow-md">
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
                 )}
@@ -72,6 +72,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">First Name</label>
                         <input
                             type="text"
+                            autoComplete="given-name"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
                             placeholder="First Name"
@@ -83,6 +84,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">Last Name</label>
                         <input
                             type="text"
+                            autoComplete="family-name"
                             value={lastName}
                             onChange={(e)=> setLastName(e.target.value)}
                             placeholder="Last Name"
@@ -93,6 +95,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">Student ID #</label>
                         <input
                             type="text"
+                            inputMode="numeric" maxLength={9}
                             value={schoolId}
                             onChange={(e) =>{
                                 const value = e.target.value.replace(/[^0-9]/g, '')
@@ -109,6 +112,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">Year</label>
                         <input
                             type="text"
+                            inputMode="numeric" maxLength={1}
                             value={year}
                             onChange={(e)=>{
                                 const value = e.target.value.replace(/[^0-9]/g, '')
@@ -136,6 +140,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">UGA Email</label>
                         <input
                             type="email"
+                            autoComplete="email" autoCapitalize="none" spellCheck={false}
                             value={email}
                             onChange={(e)=> setEmail(e.target.value)}
                             placeholder="you@uga.edu"
@@ -149,6 +154,7 @@ export default function SignUp(){
                         <label className="text-sm font-medium text-gray-700">Password</label>
                         <input
                             type="password"
+                            autoComplete="new-password"
                             value={password}
                             onChange={(e)=>setPassword(e.target.value)}
                             placeholder="******"

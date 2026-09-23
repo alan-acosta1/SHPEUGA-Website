@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useId, useRef } from "react"
 import {X} from 'lucide-react'
 type BoardingCardProps = {
     name: string
@@ -11,12 +11,13 @@ type BoardingCardProps = {
 }
 
 export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps){
-    const [isOpen, setIsOpen] = useState(false)
+    const dialogRef = useRef<HTMLDialogElement>(null)
+    const titleId = useId()
     return(
         <>
-            <div 
-                onClick={() => setIsOpen(true)}
-                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow "
+            <button type="button" aria-haspopup="dialog" aria-label={`Meet ${name}, ${position}`}
+                onClick={() => dialogRef.current?.showModal()}
+                className="w-full text-left bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow "
             >
                 <Image 
                 src={photoUrl || "/images/shpelogo.png" } 
@@ -31,30 +32,29 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
                     {position}
                 </span>
                 </div>
-            </div>
-            {isOpen && (
-            <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50">
-                <div className="bg-white rounded-2xl p-8 w-2/3 h-1/2 shadow-2xl ring-1 ring-black/5 flex relative font-sans">
+            </button>
+            <dialog ref={dialogRef} aria-labelledby={titleId} className="board-dialog bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 font-sans">
+                <div className="board-dialog-layout flex relative p-6 md:p-8">
                     <button 
-                        onClick={() => setIsOpen(false)}
+                        type="button" onClick={() => dialogRef.current?.close()}
                         aria-label="Close board member popup"
-                        className="absolute top-3 right-3 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-orange-600 transition-colors z-10">
+                        className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-white text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-orange-600 transition-colors z-10">
                         <X size={20}/>
                     </button>
-                    <div className="relative w-1/3 h-full min-h-0 shrink-0 overflow-hidden rounded-full">
+                    <div className="board-dialog-photo relative shrink-0 overflow-hidden rounded-full">
                         <Image 
                             src={photoUrl || "/images/shpelogo.png"} 
                             alt={name} 
                             fill
-                            sizes="22vw"
+                            sizes="(max-width: 1023px) 160px, 22vw"
                             className="object-cover"
                         />
                     </div>
-                    <div className="min-w-0 flex-1 px-8 lg:px-10 py-4 flex flex-col overflow-y-auto">
+                    <div className="board-dialog-copy min-w-0 flex-1 flex flex-col">
                         <p className="text-[10px] lg:text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                             UGA SHPE · Executive Board
                         </p>
-                        <h2 className="mt-3 text-2xl lg:text-4xl font-semibold tracking-tight leading-tight text-slate-900 break-words">
+                        <h2 id={titleId} className="mt-3 text-2xl lg:text-4xl font-semibold tracking-tight leading-tight text-slate-900 break-words">
                             {name}
                         </h2>
                         <p className="mt-2 text-sm lg:text-base font-medium text-orange-700">
@@ -71,8 +71,7 @@ export default function ExecCard({name,position,photoUrl,bio}:BoardingCardProps)
                     </div>
                     
                 </div>
-            </div>
-            )}
+            </dialog>
             </>
 )
 }
