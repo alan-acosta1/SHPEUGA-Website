@@ -25,6 +25,12 @@ export default async function adminMenu(){
     </div>
   </Link>
 
+  <Link href="/admin/points">
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+      <h2 className="text-xl font-bold text-gray-900">Manage Points</h2>
+      <p className="text-gray-600 mt-2">Create check-in events, award points, and review semester totals</p>
+    </div>
+  </Link>
 </div>
     )
 

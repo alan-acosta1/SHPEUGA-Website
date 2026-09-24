@@ -67,3 +67,9 @@ A log of each SHPEBytes meeting and what was covered.
 
 ### Meeting 1 — Oct. 15, 2025
 Our goal was awareness of SHPEBytes and elaborating on what was expected to be achieved. We established our first project, the UGA SHPE Website.
+
+## Member Points
+
+Members can use the Points tab to check into password-locked events and view semester totals and history. Executive board admins can create events, award points manually, correct awards, and manage semesters.
+
+Run the Supabase migration before enabling the feature. See [points setup and testing](docs/points-setup.md) for the SQL file and member/admin test steps.

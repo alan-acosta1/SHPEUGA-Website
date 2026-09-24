@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
+import { useAuth } from "../context/AuthContext"
 
 type Member = {
     id: string
@@ -16,6 +17,14 @@ type Member = {
 }
 
 export default function Profile(){
+    const { user } = useAuth()
+    return <MemberProfile key={user?.id ?? "guest"} />
+}
+
+function MemberProfile(){
+    const { user, loading: authLoading } = useAuth()
+    const userId = user?.id
+    const [retry, setRetry] = useState(0)
     const [member, setMember] = useState<Member | null>(null)
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
@@ -28,27 +37,34 @@ export default function Profile(){
     const router = useRouter()
 
     useEffect(() => {
-        const supabase = createClient()
-        supabase.auth.getUser().then(async ({ data: { user } }) => {
-            if (!user) {
-                router.push("/login")
-                return
+        if (authLoading) return
+        if (!userId) {
+            router.replace("/login")
+            return
+        }
+        let cancelled = false
+        const loadProfile = async () => {
+            try {
+                const { data, error } = await createClient()
+                    .from("members").select("*").eq("user_id", userId).single()
+                if (error) throw error
+                if (cancelled) return
+                if (data) {
+                    setMember(data)
+                    setFirstName(data.first_name)
+                    setLastName(data.last_name)
+                    setMajor(data.major)
+                    setYear(String(data.school_year))
+                }
+            } catch {
+                if (!cancelled) setError("Could not load your profile. Please try again.")
+            } finally {
+                if (!cancelled) setLoading(false)
             }
-            const { data } = await supabase
-                .from("members")
-                .select("*")
-                .eq("user_id", user.id)
-                .single()
-            if (data) {
-                setMember(data)
-                setFirstName(data.first_name)
-                setLastName(data.last_name)
-                setMajor(data.major)
-                setYear(String(data.school_year))
-            }
-            setLoading(false)
-        })
-    }, [router])
+        }
+        void loadProfile()
+        return () => { cancelled = true }
+    }, [router, userId, authLoading, retry])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -64,24 +80,25 @@ export default function Profile(){
             return
         }
 
+        if (!member) return
         setSaving(true)
-        const supabase = createClient()
-        const { error } = await supabase
-            .from("members")
-            .update({ first_name: firstName, last_name: lastName, major, school_year: year })
-            .eq("id", member!.id)
-        setSaving(false)
-
-        if (error) {
-            setError(error.message)
-        } else {
+        try {
+            const { error } = await createClient().from("members")
+                .update({ first_name: firstName, last_name: lastName, major, school_year: year })
+                .eq("id", member.id)
+            if (error) throw error
             setMessage("Profile updated")
-            setMember({ ...member!, first_name: firstName, last_name: lastName, major, school_year: year })
-        }
+            setMember({ ...member, first_name: firstName, last_name: lastName, major, school_year: year })
+        } catch {
+            setError("Could not save your profile. Please try again.")
+        } finally { setSaving(false) }
     }
 
-    if (loading) return <div className="pt-20 p-8 text-center text-gray-600">Loading...</div>
-    if (!member) return <div className="pt-20 p-8 text-center text-gray-600">Profile not found</div>
+    if (authLoading || loading) return <div className="p-8 text-center text-gray-600" role="status">Loading...</div>
+    if (!member) return <div className="p-8 text-center text-gray-600">
+        <p role={error ? "alert" : undefined}>{error || "Profile not found"}</p>
+        <button type="button" className="mt-4 min-h-11 rounded bg-blue-950 px-5 py-2 text-white" onClick={() => { setLoading(true); setError(null); setRetry(value => value + 1) }}>Try again</button>
+    </div>
 
     return (
         <div className="member-form flex w-full max-w-md flex-col items-center justify-center px-4 pb-8">

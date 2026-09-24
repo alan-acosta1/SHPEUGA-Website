@@ -1,30 +1,46 @@
-'use client'
-import {createContext, useContext, useEffect, useState} from 'react';
-import {createClient} from '@/utils/supabase/client';
+"use client";
 
-const AuthContext = createContext<{role : string | null}>({role:null});
+import { createContext, useContext, useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
 
-export function AuthProvider({children}: {children:React.ReactNode}){
-    const [role, setRole] = useState<string | null>(null);
+type AuthState = { user: User | null; loading: boolean; role: string | null };
+const AuthContext = createContext<AuthState>({ user: null, loading: true, role: null });
 
-    useEffect(()=>{
-        const fetchrole = async() =>{
-            const supabase = createClient();
-            const { data:{user}} = await supabase.auth.getUser()
-            if(!user) return
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const [session, setSession] = useState<{ user: User | null; loading: boolean }>({ user: null, loading: true });
+    const [memberRole, setMemberRole] = useState<{ userId: string; role: string | null } | null>(null);
+    const userId = session.user?.id;
 
-            const {data} = await supabase
-                .from('members')
-                .select('role')
-                .eq('user_id', user.id)
-                .single()
-            setRole(data?.role ?? null)
+    useEffect(() => {
+        // INITIAL_SESSION supplies the stored session; do not fetch the user
+        // again in every component. Keep this callback synchronous: Supabase
+        // invokes it while holding its authentication lock.
+        const { data: { subscription } } = createClient().auth.onAuthStateChange((_event, nextSession) => {
+            setSession({ user: nextSession?.user ?? null, loading: false });
+        });
+        return () => subscription.unsubscribe();
+    }, []);
 
-        }
-        fetchrole();
+    useEffect(() => {
+        if (!userId) return;
+        let cancelled = false;
+        const loadRole = async () => {
+            try {
+                const { data, error } = await createClient().from("members").select("role").eq("user_id", userId).single();
+                if (!cancelled) setMemberRole({ userId, role: error ? null : data?.role ?? null });
+            } catch {
+                if (!cancelled) setMemberRole({ userId, role: null });
+            }
+        };
+        void loadRole();
+        return () => { cancelled = true; };
+    }, [userId]);
 
-    }, [])
-    return <AuthContext.Provider value = {{role}}>{children}</AuthContext.Provider>
+    // The session drives browser UI only. Server routes and SQL/RLS continue
+    // to verify identity and permissions independently.
+    const role = userId && memberRole?.userId === userId ? memberRole.role : null;
+    return <AuthContext.Provider value={{ ...session, role }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);

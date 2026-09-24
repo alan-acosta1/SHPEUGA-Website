@@ -1,8 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
+import { useAuth } from "../context/AuthContext"
 
 export default function ResetPassword(){
    const [newPassword, setNewPassword] = useState("")
@@ -10,24 +11,9 @@ export default function ResetPassword(){
    const [loading, setLoading] = useState(false)
    const [message, setMessage] = useState("")
    const [error, setError] = useState<string | null>(null)
-   const [sessionReady, setSessionReady] = useState(false)
+   const { user, loading: authLoading } = useAuth()
+   const sessionReady = !authLoading && !!user
    const router = useRouter()
-
-   useEffect(() => {
-      const supabase = createClient()
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-         if (event === "PASSWORD_RECOVERY") {
-            setSessionReady(true)
-         }
-      })
-
-      supabase.auth.getSession().then(({ data: { session } }) => {
-         if (session) setSessionReady(true)
-      })
-
-      return () => subscription.unsubscribe()
-   }, [])
 
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
