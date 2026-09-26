@@ -65,8 +65,17 @@ function PointsContent({ adminView }: { adminView: boolean }) {
         setNotice(null);
         try {
             const result = await createClient().rpc(name, args);
-            if (result.error) throw new Error(result.error.message);
+            if (result.error) {
+                if (name === "points_delete_event" && result.error.code === "PGRST202") {
+                    throw new Error("Event deletion is not set up yet. Apply the points event deletion SQL migration in Supabase, then try again.");
+                }
+                throw new Error(result.error.message);
+            }
             if (result.data?.ok === false) throw new Error(result.data.message);
+            if (name === "points_delete_event") {
+                // Keep a successfully deleted event hidden even if the refresh fails.
+                setData(current => current ? { ...current, events: current.events.filter(event => event.id !== args.p_event_id) } : current);
+            }
             setNotice({ error: false, message: result.data?.message || success });
             try {
                 const refreshed = await fetchDashboard();

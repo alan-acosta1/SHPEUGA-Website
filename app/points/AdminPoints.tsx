@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AwardHistory } from "./AwardHistory";
-import { formatTime, type Dashboard, type Mutate } from "./types";
+import { formatTime, type Dashboard, type Mutate, type PointsEvent } from "./types";
 
 export default function AdminPoints({ data, busy, mutate }: { data: Dashboard; busy: boolean; mutate: Mutate }) {
     const [tab, setTab] = useState("events");
@@ -16,13 +16,33 @@ export default function AdminPoints({ data, busy, mutate }: { data: Dashboard; b
         </div>
         {tab === "events" && <div className="grid items-start gap-6 lg:grid-cols-2">
             <CreateEvent key={data.semester_id} data={data} disabled={busy || !semester.is_open} mutate={mutate} />
-            <section><h2 className="mb-4 text-xl font-bold">Semester events</h2><div className="space-y-4">{data.events.length ? data.events.map(event => <article key={event.id} className="points-card"><h3 className="font-bold">{event.title}</h3><p className="mt-2 text-slate-600">{data.criteria.find(c => c.code === event.criterion)?.label} · {event.points} points</p><p className="mt-2 text-sm text-slate-500">{formatTime(event.opens_at)} – {formatTime(event.closes_at)} ET</p><p className="my-3 text-sm">Check-in {event.is_open ? "enabled during this time window" : "disabled"}.</p><button className="points-secondary" disabled={busy} onClick={() => mutate("points_set_event_open", { p_event_id: event.id, p_open: !event.is_open }, event.is_open ? "Event check-in disabled." : "Event check-in enabled within its scheduled window.")}>{event.is_open ? "Disable check-in" : "Enable check-in"}</button></article>) : <p className="points-card text-slate-600">Create your first event for {semester.name}.</p>}</div></section>
+            <section><h2 className="mb-4 text-xl font-bold">Semester events</h2><div className="space-y-4">{data.events.length ? data.events.map(event => <AdminEvent key={event.id} event={event} criterion={data.criteria.find(c => c.code === event.criterion)?.label} busy={busy} mutate={mutate} />) : <p className="points-card text-slate-600">No events to show for {semester.name}.</p>}</div></section>
         </div>}
         {tab === "award" && <ManualAward key={data.semester_id} data={data} disabled={busy || !semester.is_open} mutate={mutate} />}
         {tab === "members" && <section><h2 className="mb-4 text-xl font-bold">Member totals · {semester.name}</h2><label className="mb-5 block max-w-md">Search members<input type="search" placeholder="Name or email" value={search} onChange={e => setSearch(e.target.value)} /></label><div className="grid gap-3 sm:grid-cols-2">{members.map(member => <article key={member.user_id} className="points-card"><p className="font-bold">{member.first_name} {member.last_name}</p><p className="mt-1 break-all text-sm text-slate-500">{member.email}</p><dl className="mt-4 flex flex-wrap gap-5"><div><dt className="text-sm text-slate-500">Points</dt><dd className="text-xl font-bold text-orange-700">{member.total}</dd></div><div><dt className="text-sm text-slate-500">Events</dt><dd className="text-xl font-bold">{member.event_count}</dd></div><div><dt className="text-sm text-slate-500">Rank</dt><dd className="text-xl font-bold">#{member.rank}</dd></div></dl></article>)}</div>{members.length === 0 && <p className="points-card">No members match your search.</p>}</section>}
         {tab === "history" && <section><h2 className="mb-4 text-xl font-bold">Recent awards · {semester.name}</h2><AwardHistory awards={data.recent_awards ?? []} admin busy={busy} mutate={mutate} /></section>}
         {tab === "semesters" && <div className="grid gap-6 md:grid-cols-2"><form className="points-card" onSubmit={async e => { e.preventDefault(); if (await mutate("points_create_semester", { p_name: semesterName }, "Semester created. Select it from the semester menu above.")) setSemesterName(""); }}><h2 className="mb-4 text-xl font-bold">Add a semester</h2><label>Semester name<input value={semesterName} onChange={e => setSemesterName(e.target.value)} placeholder="Spring 2027" required maxLength={80} disabled={busy} /></label><button className="points-primary mt-4" disabled={busy}>Create semester</button></form><section className="points-card"><h2 className="text-xl font-bold">{semester.name}</h2><p className="my-4 text-slate-600">Closing a semester stops new check-ins and manual awards. Its totals and history remain available, and admins can still void incorrect awards.</p><button className="points-secondary" disabled={busy} onClick={() => mutate("points_set_semester_open", { p_semester_id: semester.id, p_open: !semester.is_open }, semester.is_open ? "Semester closed." : "Semester reopened.")}>{semester.is_open ? "Close semester" : "Reopen semester"}</button></section></div>}
     </section>;
+}
+
+function AdminEvent({ event, criterion, busy, mutate }: { event: PointsEvent; criterion?: string; busy: boolean; mutate: Mutate }) {
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
+    return <article className="points-card">
+        <h3 className="font-bold">{event.title}</h3>
+        <p className="mt-2 text-slate-600">{criterion} · {event.points} points</p>
+        <p className="mt-2 text-sm text-slate-500">{formatTime(event.opens_at)} – {formatTime(event.closes_at)} ET</p>
+        <p className="my-3 text-sm">Check-in {event.is_open ? "enabled during this time window" : "disabled"}.</p>
+        {confirmingDelete ? <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <p className="text-sm text-red-900">Delete this event? It will disappear from event lists and stop accepting check-ins. Points already earned and award history will stay.</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+                <button type="button" className="points-secondary text-red-700" disabled={busy} onClick={() => void mutate("points_delete_event", { p_event_id: event.id }, "Event deleted. Existing points and award history were kept.")}>Confirm delete</button>
+                <button type="button" className="points-secondary" disabled={busy} onClick={() => setConfirmingDelete(false)}>Cancel</button>
+            </div>
+        </div> : <div className="flex flex-wrap gap-3">
+            <button type="button" className="points-secondary" disabled={busy} onClick={() => void mutate("points_set_event_open", { p_event_id: event.id, p_open: !event.is_open }, event.is_open ? "Event check-in disabled." : "Event check-in enabled within its scheduled window.")}>{event.is_open ? "Disable check-in" : "Enable check-in"}</button>
+            <button type="button" className="points-secondary text-red-700" disabled={busy} onClick={() => setConfirmingDelete(true)}>Delete event</button>
+        </div>}
+    </article>;
 }
 
 function CreateEvent({ data, disabled, mutate }: { data: Dashboard; disabled: boolean; mutate: Mutate }) {

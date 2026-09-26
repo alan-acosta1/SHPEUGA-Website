@@ -1,6 +1,6 @@
 # Member points — setup and testing
 
-This feature uses the website's existing Supabase Auth accounts and `public.members` profiles. It is implemented on the local `codex/member-points` branch, based on the deployed `Main` design. It has **not** been deployed and no live database changes have been made.
+This feature uses the website's existing Supabase Auth accounts and `public.members` profiles. Website deployments and Supabase migrations are separate steps; pushing website code does not apply SQL migrations.
 
 ## 1. Set up Supabase
 
@@ -9,7 +9,8 @@ Open the Supabase project used by your local `.env`. For isolated testing, use a
 1. Open **SQL Editor → New query** in the Supabase dashboard.
 2. Paste the entire contents of [`../supabase/migrations/202609240001_member_points.sql`](../supabase/migrations/202609240001_member_points.sql).
 3. Run it **once**, as the project database owner. The migration runs in a transaction; a failure rolls it back. If it reports an existing points table/function, check whether setup has already been completed instead of deleting data.
-4. The setup creates Fall 2026 automatically. Keep `points_private` out of Supabase's exposed schemas. Only the authenticated RPCs in `public` need to be exposed.
+4. Run [`../supabase/migrations/202609260001_points_event_deletion.sql`](../supabase/migrations/202609260001_points_event_deletion.sql) once, after the initial setup. For an existing points installation, run **only this new migration** before deploying the Delete event button. It preserves existing events and awards and adds the deletion RPC and filters.
+5. The setup creates Fall 2026 automatically. Keep `points_private` out of Supabase's exposed schemas. Only the authenticated RPCs in `public` need to be exposed.
 
 The SQL uses existing `members.user_id`, `role`, `first_name`, `last_name`, and `email` columns. `user_id` must link to the user's Supabase Auth UUID. Existing executive board accounts with `members.role = 'exec'` become points admins. Members must have registered profiles before using points. No service-role key is required in the website.
 
@@ -47,6 +48,9 @@ Use separate browser profiles or a private window to avoid mixing sessions. Neve
 7. Create **Spring 2027** under **Semesters**, then select it in the semester menu. Totals start at zero; Fall 2026 history remains available.
 8. Close a semester and confirm it blocks event creation, check-ins, and new manual awards. Reopen it to resume. History and corrections remain available while closed.
 9. Test the member view at phone width. Ensure it cannot open admin controls or access another member's history.
+10. As an admin, open **Events → Delete event**. Cancel first to verify nothing changes, then confirm. The event disappears from both admin and member event lists and the linked-event selector. Refresh the member page to see changes made in another session. Existing totals and award history remain available. Deleted events cannot accept check-ins, be reopened, or receive new linked awards, including from an already-open stale page.
+
+Deletion records `deleted_at` and `deleted_by` on the event and disables check-in. It does not erase the event row or its attendance records. To remove incorrect points, use **Award history → Correct this award** separately.
 
 ## Scoring
 
