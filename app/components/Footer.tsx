@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link"
 import { FaInstagram } from "react-icons/fa"
 
 
@@ -10,6 +11,9 @@ export default function Footer(){
                 className="text-orange-700 text-5xl hover:text-blue-700 cursor-pointer transition-colors"
                 />
             </a>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline underline-offset-4 hover:text-blue-950">
+                Privacy Policy
+            </Link>
             <p className="text-xs text-slate-600">
                 © {new Date().getFullYear()} UGA SHPE. All rights reserved.
             </p>

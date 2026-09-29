@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const BASE_URL = "https://shpeuga.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["", "/about", "/board", "/event", "/resources", "/sponser"];
+  const routes = ["", "/about", "/board", "/event", "/resources", "/sponser", "/privacy"];
 
   return routes.map((route) => ({
     url: `${BASE_URL}${route}`,

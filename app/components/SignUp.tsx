@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 export default function SignUp(){
@@ -161,6 +162,9 @@ export default function SignUp(){
                             className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 placeholder:text-gray-300 text-gray-900"
                         />
                     </div>
+                    <p className="text-sm leading-6 text-gray-600">
+                        Read our <Link href="/privacy" className="text-orange-800 underline underline-offset-4 hover:text-blue-950">Privacy Policy</Link> to learn how we use your account information.
+                    </p>
                     <button
                         type="submit"
                         disabled={loading}
