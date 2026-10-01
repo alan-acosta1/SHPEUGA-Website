@@ -21,7 +21,7 @@ export default async function adminMenu(){
   <Link href="/admin/manageMembers">
     <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer">
       <h2 className="text-xl font-bold text-gray-900">Manage Members</h2>
-      <p className="text-gray-600 mt-2">View all members and update their roles</p>
+      <p className="text-gray-600 mt-2">View, update roles, and delete members</p>
     </div>
   </Link>
 
