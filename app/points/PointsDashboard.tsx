@@ -97,7 +97,7 @@ function PointsContent({ adminView }: { adminView: boolean }) {
         <main className="points-page mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-28 sm:px-6">
             <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
                 <div><h1 className="text-3xl font-bold text-orange-600 sm:text-4xl">{adminView ? "Manage points" : "Member points"}</h1><p className="mt-3 max-w-2xl text-slate-600">Show up, get involved, and track your progress with SHPE UGA. Points start fresh each semester; your history stays available.</p></div>
-                {data?.is_admin && <Link href={adminView ? "/points" : "/admin/points"} className="points-secondary">{adminView ? "My points" : "Manage points"}</Link>}
+                {data?.is_admin && <Link href={adminView ? "/points" : "/admin/points"} className="points-secondary">{adminView ? "Points overview" : "Manage points"}</Link>}
             </div>
             {notice && <div role={notice.error ? "alert" : "status"} className={`mb-6 rounded-lg border p-4 ${notice.error ? "border-red-200 bg-red-50 text-red-800" : "border-green-200 bg-green-50 text-green-800"}`}>{notice.message}</div>}
             {phase === "loading" && <p role="status" className="points-card">Loading points…</p>}
@@ -111,14 +111,16 @@ function PointsContent({ adminView }: { adminView: boolean }) {
                 </div>
                 {!selected?.is_open && <p className="mb-6 rounded-lg bg-amber-50 p-4 text-amber-900">This semester is closed. You can still view its history; new check-ins and awards are paused.</p>}
                 {adminView ? (data.is_admin ? <AdminPoints data={data} busy={busy} mutate={mutate} /> : <p className="points-card">Only chapter admins can manage points.</p>) : <>
+                    {data.is_admin ? <p className="points-card mb-8">Executive board members do not receive points or appear in semester rankings. You can still manage events and award points to members.</p> : <>
                     <section aria-label="Your semester summary" className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                         {[["Total points", data.summary?.total ?? 0], ["Events attended", data.summary?.event_count ?? 0], ["Semester rank", data.summary?.rank ? `#${data.summary.rank}` : "—"]].map(([label, value]) => <div key={label} className="points-card"><p className="text-sm font-semibold text-slate-600">{label}</p><p className="mt-3 text-4xl font-bold text-orange-600">{value}</p></div>)}
                     </section>
                     <section className="mb-10"><h2 className="mb-2 text-2xl font-bold">Event check-in</h2><p className="mb-5 text-slate-600">Enter the event password to earn points once. Check-in times are shown in Eastern Time.</p><div className="grid gap-4 md:grid-cols-2">{data.events.length ? data.events.map(event => <EventCheckIn key={event.id} event={event} status={eventStatus(event, !!selected?.is_open, now)} busy={busy} mutate={mutate} />) : <p className="points-card md:col-span-2">No events have been added for this semester yet.</p>}</div></section>
+                    </>}
                     <section className="mb-10"><h2 className="mb-5 text-2xl font-bold">Your points history</h2><AwardHistory awards={data.awards} /></section>
                 </>}
             </>}
-            <section className="points-card mt-8"><h2 className="mb-4 text-xl font-bold">How to earn points</h2><dl className="divide-y divide-slate-100">{(data?.criteria ?? criteria).map(criterion => <div key={criterion.code} className="flex items-center justify-between gap-4 py-3"><dt>{criterion.label}</dt><dd className="shrink-0 font-bold text-orange-700">{criterion.points} {criterion.points === 1 ? "point" : "points"}</dd></div>)}</dl><p className="mt-4 text-sm text-slate-500">Instagram reposts are verified and awarded by admins. Tied totals share the same rank.</p></section>
+            <section className="points-card mt-8"><h2 className="mb-4 text-xl font-bold">How to earn points</h2><dl className="divide-y divide-slate-100">{(data?.criteria ?? criteria).map(criterion => <div key={criterion.code} className="flex items-center justify-between gap-4 py-3"><dt>{criterion.label}</dt><dd className="shrink-0 font-bold text-orange-700">{criterion.points} {criterion.points === 1 ? "point" : "points"}</dd></div>)}</dl><p className="mt-4 text-sm text-slate-500">Executive board members are not eligible to earn points. Instagram reposts are verified and awarded by admins. Tied totals share the same rank.</p></section>
         </main>
         <div className="flex justify-center"><Footer /></div>
     </div>;

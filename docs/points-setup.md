@@ -10,7 +10,8 @@ Open the Supabase project used by your local `.env`. For isolated testing, use a
 2. Paste the entire contents of [`../supabase/migrations/202609240001_member_points.sql`](../supabase/migrations/202609240001_member_points.sql).
 3. Run it **once**, as the project database owner. The migration runs in a transaction; a failure rolls it back. If it reports an existing points table/function, check whether setup has already been completed instead of deleting data.
 4. Run [`../supabase/migrations/202609260001_points_event_deletion.sql`](../supabase/migrations/202609260001_points_event_deletion.sql) once, after the initial setup. For an existing points installation, run **only this new migration** before deploying the Delete event button. It preserves existing events and awards and adds the deletion RPC and filters.
-5. The setup creates Fall 2026 automatically. Keep `points_private` out of Supabase's exposed schemas. Only the authenticated RPCs in `public` need to be exposed.
+5. Run [`../supabase/migrations/202609300002_exclude_exec_points.sql`](../supabase/migrations/202609300002_exclude_exec_points.sql) after the event deletion migration, before deploying the exec eligibility UI. Existing installations need only the migrations they have not yet applied.
+6. The setup creates Fall 2026 automatically. Keep `points_private` out of Supabase's exposed schemas. Only the authenticated RPCs in `public` need to be exposed.
 
 The SQL uses existing `members.user_id`, `role`, `first_name`, `last_name`, and `email` columns. `user_id` must link to the user's Supabase Auth UUID. Existing executive board accounts with `members.role = 'exec'` become points admins. Members must have registered profiles before using points. No service-role key is required in the website.
 
@@ -64,7 +65,9 @@ Deletion records `deleted_at` and `deleted_by` on the event and disables check-i
 
 Each event uses one criterion. “First GBM” is the activity type for the semester's first meeting, not an automatic first-visit bonus. Admins choose that type for the corresponding event. Manual awards can apply a quantity from 1 to 100; event-linked attendance is always quantity 1. Event/password awards use the database-defined value, never a client-supplied point amount.
 
-Totals and ranks include all active awards in the selected semester. Rank uses competition ranking: equal totals share a rank, and the next rank skips positions (1, 1, 3). Members see only their own totals, rank, and latest 200 history entries. Admins can see all registered member totals and the latest 500 award entries. Closing a semester preserves its records.
+Executive board members (`role = 'exec'`) cannot earn points through check-in or manual awards. They retain all points administration tools but are excluded from totals, rankings, and award recipient lists. Existing awards remain in history; if their role returns to Member, those previous awards count again. Role changes take effect in the database immediately; refresh an already-open page to update its controls.
+
+Totals and ranks include all active awards for eligible members in the selected semester. Rank uses competition ranking: equal totals share a rank, and the next rank skips positions (1, 1, 3). Members see only their own totals, rank, and latest 200 history entries. Admins can see all eligible member totals and the latest 500 award entries. Closing a semester preserves its records.
 
 ## Protection and automated checks
 
@@ -81,7 +84,7 @@ npm run lint
 npm run build
 ```
 
-`test:points` uses PGlite (local PostgreSQL with pgcrypto) and disposable synthetic accounts. It executes the same SQL migration and never connects to your Supabase project. It tests permissions, password hashing/check-in, duplicates, manual awards, corrections, semesters, and private member data. Browser flows were also tested against a disposable local PostgreSQL database with test authentication. Testing with your own Supabase project is the final integration check.
+`test:points` uses PGlite (local PostgreSQL with pgcrypto) and disposable synthetic accounts. It executes the same SQL migration and never connects to your Supabase project. It tests permissions, password hashing/check-in, duplicates, manual awards, corrections, semesters, private member data, and exec eligibility (including role changes and historical awards). Browser flows were also tested against a disposable local PostgreSQL database with test authentication. Testing with your own Supabase project is the final integration check.
 
 Database security reference: [Supabase database functions](https://supabase.com/docs/guides/database/functions).
 Local database test runtime: [PGlite extensions](https://pglite.dev/extensions/).

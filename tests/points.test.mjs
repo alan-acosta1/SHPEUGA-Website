@@ -225,5 +225,101 @@ test('Supabase points migration, permissions, and accounting', async t => {
             assert.deepEqual(after.awards, before.awards);
             assert(!after.events.some(event => event.id === newEvent));
         });
+        let legacyExecAward;
+        let eligibleEvent;
+        await t.test('exec eligibility migration preserves history and removes execs from rankings', async () => {
+            await asUser(ADMIN);
+            legacyExecAward = await rpc('points_award_manual', [randomUUID(), semester, ADMIN, 'instagram_repost', 100, 'Legacy exec award', null]);
+            const before = await rpc('points_dashboard', [semester]);
+            assert.equal(before.summary.rank, 1);
+            await owner();
+            await db.exec(await readFile(new URL('../supabase/migrations/202609300002_exclude_exec_points.sql', import.meta.url), 'utf8'));
+            await asUser(ADMIN);
+            const after = await rpc('points_dashboard', [semester]);
+            assert.equal(after.is_admin, true);
+            assert.equal(after.summary, null);
+            assert.deepEqual(after.awards, before.awards);
+            assert.deepEqual(after.recent_awards, before.recent_awards);
+            assert.deepEqual(after.events, before.events);
+            assert.equal(after.members.length, 2);
+            assert(!after.members.some(m => m.user_id === ADMIN));
+            assert.equal(after.members.find(m => m.user_id === MEMBER).rank, 1);
+            assert.equal(after.members.find(m => m.user_id === OTHER).rank, 2);
+        });
+        await t.test('exec check-ins and all manual award types are rejected without writing points', async () => {
+            eligibleEvent = randomUUID();
+            await rpc('points_create_event', eventArgs(eligibleEvent));
+            const before = await rpc('points_dashboard', [semester]);
+            const result = await rpc('points_check_in', [eligibleEvent, password]);
+            assert.equal(result.ok, false);
+            assert.match(result.message, /not eligible/);
+            for (const criterion of before.criteria) {
+                await assert.rejects(() => rpc('points_award_manual', [randomUUID(), semester, ADMIN, criterion.code, 1, 'Exec award', null]), /not eligible/);
+            }
+            await assert.rejects(() => rpc('points_award_manual', [randomUUID(), semester, ADMIN, 'first_gbm', 1, 'Exec attendance', eligibleEvent]), /not eligible/);
+            const after = await rpc('points_dashboard', [semester]);
+            assert.deepEqual(after.awards, before.awards);
+            assert.deepEqual(after.recent_awards, before.recent_awards);
+            assert.equal(after.events.find(e => e.id === eligibleEvent).claimed, false);
+        });
+        await t.test('eligible members still earn points once and manual retries stay idempotent', async () => {
+            await asUser(MEMBER);
+            const before = await rpc('points_dashboard', [semester]);
+            assert.equal((await rpc('points_check_in', [eligibleEvent, password])).ok, true);
+            assert.equal((await rpc('points_check_in', [eligibleEvent, password])).ok, false);
+            await asUser(ADMIN);
+            const args = [randomUUID(), semester, MEMBER, 'instagram_repost', 2, 'Verified reposts', null];
+            const award = await rpc('points_award_manual', args);
+            assert.equal(await rpc('points_award_manual', args), award);
+            await asUser(MEMBER);
+            const after = await rpc('points_dashboard', [semester]);
+            assert.equal(after.summary.total, before.summary.total + 7);
+            assert.equal(after.summary.event_count, before.summary.event_count + 1);
+            assert.equal(after.members, undefined);
+            assert.equal(after.recent_awards, undefined);
+            // Existing deletion and password checks still apply after the new migration.
+            assert.match((await rpc('points_check_in', [eventId, password])).message, /Event not found/);
+            await asUser(OTHER);
+            assert.match((await rpc('points_check_in', [eligibleEvent, 'incorrect'])).message, /Incorrect/);
+        });
+        await t.test('promotion blocks stale requests; returning to member restores eligibility and prior totals', async () => {
+            await asUser(OTHER);
+            const before = await rpc('points_dashboard', [semester]);
+            await asUser(ADMIN);
+            await owner();
+            await db.query("update public.members set role='exec' where user_id=$1", [OTHER]);
+            await asUser(ADMIN);
+            await assert.rejects(() => rpc('points_award_manual', [randomUUID(), semester, OTHER, 'instagram_repost', 1, 'Stale member selection', null]), /not eligible/);
+            assert(!(await rpc('points_dashboard', [semester])).members.some(m => m.user_id === OTHER));
+            await asUser(OTHER);
+            assert.equal((await rpc('points_check_in', [eligibleEvent, password])).ok, false);
+            const promoted = await rpc('points_dashboard', [semester]);
+            assert.equal(promoted.is_admin, true);
+            assert.equal(promoted.summary, null);
+            assert.deepEqual(promoted.awards, before.awards);
+            await asUser(ADMIN);
+            await owner();
+            await db.query("update public.members set role='member' where user_id=$1", [OTHER]);
+            await asUser(OTHER);
+            const restored = await rpc('points_dashboard', [semester]);
+            assert.equal(restored.is_admin, false);
+            assert.deepEqual(restored.summary, before.summary);
+            assert.equal((await rpc('points_check_in', [eligibleEvent, password])).ok, true);
+        });
+        await t.test('execs retain correction and event management access; RPC permissions remain protected', async () => {
+            await asUser(ADMIN);
+            await rpc('points_void_award', [legacyExecAward, 'Legacy correction']);
+            assert((await rpc('points_dashboard', [semester])).awards.find(a => a.id === legacyExecAward).voided_at);
+            await rpc('points_set_event_open', [eligibleEvent, false]);
+            await rpc('points_delete_event', [eligibleEvent]);
+            await asUser(MEMBER);
+            await assert.rejects(() => rpc('points_award_manual', [randomUUID(), semester, OTHER, 'instagram_repost', 1, 'Unauthorized', null]), /Only executive/);
+            await asUser(OUTSIDER);
+            await assert.rejects(() => rpc('points_check_in', [eligibleEvent, password]), /registered member/);
+            await db.exec('reset role; set role anon;');
+            await assert.rejects(() => rpc('points_check_in', [eligibleEvent, password]), /permission denied/);
+            await assert.rejects(() => rpc('points_award_manual', [randomUUID(), semester, MEMBER, 'instagram_repost', 1, 'Unauthorized', null]), /permission denied/);
+            await assert.rejects(() => rpc('points_dashboard', [semester]), /permission denied/);
+        });
     } finally { await db.close(); }
 });
