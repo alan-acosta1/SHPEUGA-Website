@@ -120,7 +120,7 @@ function PointsContent({ adminView }: { adminView: boolean }) {
                     <section className="mb-10"><h2 className="mb-5 text-2xl font-bold">Your points history</h2><AwardHistory awards={data.awards} /></section>
                 </>}
             </>}
-            <section className="points-card mt-8"><h2 className="mb-4 text-xl font-bold">How to earn points</h2><dl className="divide-y divide-slate-100">{(data?.criteria ?? criteria).map(criterion => <div key={criterion.code} className="flex items-center justify-between gap-4 py-3"><dt>{criterion.label}</dt><dd className="shrink-0 font-bold text-orange-700">{criterion.points} {criterion.points === 1 ? "point" : "points"}</dd></div>)}</dl><p className="mt-4 text-sm text-slate-500">Executive board members are not eligible to earn points. Instagram reposts are verified and awarded by admins. Tied totals share the same rank.</p></section>
+            <section className="points-card mt-8"><h2 className="mb-4 text-xl font-bold">How to earn points</h2><dl className="divide-y divide-slate-100">{(data?.criteria ?? criteria).map(criterion => <div key={criterion.code} className="flex items-center justify-between gap-4 py-3"><dt>{criterion.label}</dt><dd className="shrink-0 font-bold text-orange-700">{criterion.points} {criterion.points === 1 ? "point" : "points"}</dd></div>)}</dl><p className="mt-4 text-sm text-slate-500">Executive board members are not eligible to earn points. Tied totals share the same rank.</p></section>
         </main>
         <div className="flex justify-center"><Footer /></div>
     </div>;

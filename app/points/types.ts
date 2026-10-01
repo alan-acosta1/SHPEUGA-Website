@@ -10,7 +10,6 @@ export const criteria: Criterion[] = [
     { code: "regular_gbm", label: "Regular GBM", points: 1, is_event: true },
     { code: "social_event", label: "Social/Event", points: 1, is_event: true },
     { code: "professional_development", label: "Professional Development Event", points: 2, is_event: true },
-    { code: "instagram_repost", label: "Instagram Flyer Repost", points: 1, is_event: false },
 ];
 export function eventStatus(event: PointsEvent, semesterOpen: boolean, now: number) {
     if (event.claimed) return "Recorded";
