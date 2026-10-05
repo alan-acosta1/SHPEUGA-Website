@@ -10,19 +10,35 @@ export default function Login(){
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [needsVerification, setNeedsVerification] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async(e:React.FormEvent)=> {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setNeedsVerification(false);
         const supabase = createClient();
-        const {data, error} = await supabase.auth.signInWithPassword({email,password});
-        if(error){
-            setError(error.message);
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+            if (error) {
+                setNeedsVerification(error.code === "email_not_confirmed");
+                setError(error.code === "email_not_confirmed"
+                    ? "Please verify your UGA email before logging in."
+                    : error.message);
+                return;
+            }
+            if (!data.user?.email_confirmed_at) {
+                await supabase.auth.signOut();
+                router.push("/confirmemail");
+                return;
+            }
+            router.push("/");
+            router.refresh();
+        } catch {
+            setError("Unable to log in. Please check your connection and try again.");
+        } finally {
             setLoading(false);
-        }else{  
-                router.push(`/`)
         }
     }
 
@@ -33,6 +49,11 @@ export default function Login(){
                 {/*<h1 className="text-2xl font-bold text-center mb-6 text-gray-950">LogIn</h1>*/}
                 {error && (
                     <p className="text-red-500 text-sm text-center mb-6">{error}</p>
+                )}
+                {needsVerification && (
+                    <p className="text-sm text-center mb-6">
+                        <Link href="/confirmemail" className="text-red-500 hover:underline">Resend verification email</Link>
+                    </p>
                 )}
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                     <div>

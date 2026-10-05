@@ -22,7 +22,11 @@ export default function SignUp(){
         e.preventDefault();
         setLoading(true);
         setError(null);
-        if(!firstName || !lastName || !email || !password || !schoolId || !major || !year){
+        setIdError(null);
+        setYearError(null);
+        setEmailError(null);
+        const normalizedEmail = email.trim().toLowerCase();
+        if(!firstName.trim() || !lastName.trim() || !normalizedEmail || !password || !schoolId || !major.trim() || !year){
             setError("Please fill in all fields");
             setLoading(false);
             return;
@@ -37,7 +41,7 @@ export default function SignUp(){
             setLoading(false);
             return;
         }
-        if(!email.endsWith('@uga.edu')){
+        if(!/^[^\s@]+@uga\.edu$/.test(normalizedEmail)){
             setEmailError("Please enter UGA email");
             setLoading(false);
             return;
@@ -48,18 +52,38 @@ export default function SignUp(){
             return;
         }
         const supabase = createClient();
-        const {data, error} = await supabase.auth.signUp({email,password});
-        if(error){
-            setError(error.message);
-            setLoading(false);
-        }else{
-            const {error: insertError} = await supabase.from('members').insert({first_name: firstName,last_name:lastName,email:email,major:major,school_year:year,school_id:schoolId,role:"member",user_id: data.user?.id})
-            if(insertError){
-                setError(insertError.message);
-                setLoading(false);
-            }else{
-                router.push(`/login`)
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: normalizedEmail,
+                password,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/auth/confirm`,
+                    data: {
+                        first_name: firstName.trim(),
+                        last_name: lastName.trim(),
+                        major: major.trim(),
+                        school_year: year,
+                        school_id: schoolId,
+                    },
+                },
+            });
+            if (error) {
+                setError(error.message);
+                return;
             }
+            // Confirmation must be enabled in Supabase, otherwise signup logs in
+            // immediately without proving ownership of the email address.
+            if (data.session) {
+                await supabase.auth.signOut();
+                setError("Email verification is unavailable. Please contact UGA SHPE before trying again.");
+                return;
+            }
+            // The database creates the member profile when the email is verified.
+            router.push("/confirmemail");
+        } catch {
+            setError("Unable to create your account. Please try again.");
+        } finally {
+            setLoading(false);
         }
     }
     return(

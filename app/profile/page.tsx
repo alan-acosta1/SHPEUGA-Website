@@ -1,7 +1,13 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 import NavBar from "../components/NavBar";
 import Profile from "../components/Profile";
 
-export default function ProfilePage(){
+export default async function ProfilePage(){
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+    if (!user.email_confirmed_at) redirect("/confirmemail");
     return(
         <main className="min-h-screen w-full bg-white flex flex-col items-center">
         <NavBar></NavBar>

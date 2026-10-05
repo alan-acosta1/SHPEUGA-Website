@@ -22,11 +22,22 @@ export async function updateSession(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
+  // Preserve refreshed auth cookies on redirects as well as normal responses.
+  const redirectTo = (pathname: string) => {
+    const response = NextResponse.redirect(new URL(pathname, request.url))
+    supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie))
+    return response
+  }
 
+  const isAdminRoute = request.nextUrl.pathname === '/admin' || request.nextUrl.pathname.startsWith('/admin/')
+  const isMemberRoute = request.nextUrl.pathname === '/profile' || request.nextUrl.pathname.startsWith('/profile/')
+
+  if (isAdminRoute || isMemberRoute) {
+    if (!user) return redirectTo('/login')
+    if (!user.email_confirmed_at) return redirectTo('/confirmemail')
+  }
+
+  if (isAdminRoute && user) {
     const { data: member } = await supabase
       .from('members')
       .select('role')
@@ -34,7 +45,7 @@ export async function updateSession(request: NextRequest) {
       .single()
 
     if (!member || member.role !== 'exec') {
-      return NextResponse.redirect(new URL('/', request.url))
+      return redirectTo('/')
     }
   }
 
