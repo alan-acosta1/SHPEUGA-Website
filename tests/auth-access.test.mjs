@@ -35,13 +35,13 @@ test("anonymous visitors cannot open member or admin routes", async () => {
     }
 });
 
-test("unverified users cannot reach member data or trigger executive role checks", async () => {
-    for (const path of ["/profile", "/admin/manageMembers"]) {
-        const flow = proxy({ id: "pending", email_confirmed_at: null }, "exec");
-        const response = await flow.request(path);
-        assert.equal(response.headers.get("location"), "https://shpeuga.com/confirmemail");
-        assert.equal(flow.roleChecks(), 0);
-    }
+test("authenticated users use normal member access without a verification-page redirect", async () => {
+    const user = { id: "member", email_confirmed_at: null };
+    const member = proxy(user);
+    assert.equal((await member.request("/profile")).status, 200);
+    assert.equal((await member.request("/admin/manageMembers")).headers.get("location"), "https://shpeuga.com/");
+    assert.equal(member.roleChecks(), 1);
+    assert.equal((await proxy(user, "exec").request("/admin/manageMembers")).status, 200);
 });
 
 test("verified members can open their profile but executive checks still protect admin routes", async () => {
@@ -55,7 +55,7 @@ test("verified members can open their profile but executive checks still protect
     assert.equal((await exec.request("/admin/manageMembers")).status, 200);
 });
 
-test("public pages and verification remain accessible without a session", async () => {
+test("public pages and legacy auth URLs remain accessible without a session", async () => {
     for (const path of ["/", "/signup", "/login", "/confirmemail", "/auth/confirm?token_hash=secret&type=email", "/resetpassword"]) {
         assert.equal((await proxy(null).request(path)).status, 200);
     }

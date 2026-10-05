@@ -47,7 +47,7 @@ test("missing tokens, recovery tokens, unknown types and provider errors cannot 
     for (const query of ["", "?token_hash=secret", "?type=email", "?token_hash=secret&type=recovery", "?token_hash=secret&type=unknown", "?token_hash=secret&type=email&error=access_denied"]) {
         const flow = callback(verified);
         const response = await flow.request(query);
-        assert.equal(response.headers.get("location"), "https://shpeuga.com/confirmemail?error=invalid_link");
+        assert.equal(response.headers.get("location"), "https://shpeuga.com/login");
         assert.equal(flow.calls.length, 0);
     }
 });
@@ -60,23 +60,23 @@ test("default-template PKCE codes can establish a verified session", async () =>
     assert.equal(flow.calls[0].code, "pkce-secret");
 });
 
-test("expired, reused and failed exchanges return to the resend page without secrets", async () => {
+test("expired, reused and failed exchanges return to login without secrets", async () => {
     for (const query of ["?token_hash=secret&type=email", "?code=secret"]) {
         const flow = callback({ data: { user: null, session: null }, error: { code: "otp_expired" } });
         const response = await flow.request(query);
-        assert.equal(response.headers.get("location"), "https://shpeuga.com/confirmemail?error=invalid_link");
+        assert.equal(response.headers.get("location"), "https://shpeuga.com/login");
     }
 });
 
 test("an unverified returned session is signed out", async () => {
     const flow = callback({ data: { user: { email_confirmed_at: null }, session: {} }, error: null });
     const response = await flow.request("?token_hash=secret&type=email");
-    assert.equal(response.headers.get("location"), "https://shpeuga.com/confirmemail?error=invalid_link");
+    assert.equal(response.headers.get("location"), "https://shpeuga.com/login");
     assert.equal(flow.calls.at(-1).method, "signOut");
 });
 
 test("network failures give a recoverable confirmation error", async () => {
     const flow = callback(null, true);
     const response = await flow.request("?token_hash=secret&type=email");
-    assert.equal(response.headers.get("location"), "https://shpeuga.com/confirmemail?error=invalid_link");
+    assert.equal(response.headers.get("location"), "https://shpeuga.com/login");
 });

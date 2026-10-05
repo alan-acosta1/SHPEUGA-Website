@@ -77,6 +77,15 @@ for (const columnType of ["text", "integer"]) {
                 assert.equal(rows.length, 0);
             });
 
+            await t.test("automatic confirmation creates a member profile immediately without an email step", async () => {
+                await addUser(db, 2, { ...profile, role: "exec" }, { confirmed: true });
+                const { rows } = await db.query("select * from public.members where user_id = $1", [id(2)]);
+                assert.equal(rows.length, 1);
+                assert.equal(rows[0].role, "member");
+                assert.equal(rows[0].first_name, "Ana");
+                assert.equal((await asUser(db, 2, `select * from public.members where user_id = '${id(2)}'`)).rows.length, 1);
+            });
+
             await t.test("anonymous and unverified requests cannot read existing member data", async () => {
                 assert.equal((await asUser(db, null, "select * from public.members", "anon")).rows.length, 0);
                 assert.equal((await asUser(db, 1, "select * from public.members")).rows.length, 0);

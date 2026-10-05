@@ -34,7 +34,6 @@ export async function updateSession(request: NextRequest) {
 
   if (isAdminRoute || isMemberRoute) {
     if (!user) return redirectTo('/login')
-    if (!user.email_confirmed_at) return redirectTo('/confirmemail')
   }
 
   if (isAdminRoute && user) {

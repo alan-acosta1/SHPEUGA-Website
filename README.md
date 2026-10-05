@@ -7,7 +7,7 @@ The official website for the Society of Hispanic Professional Engineers (SHPE) c
 ## Features
 
 - Public pages: about, events, sponsors, resources, exec board
-- Member authentication: sign-up with UGA email verification, login, and password reset via Supabase Auth
+- Member authentication: sign-up, login, and password reset via Supabase Auth
 - Self-service member profiles
 - Role-based admin dashboard for managing members, protected by Postgres Row-Level Security and Next.js middleware
 - Hardcoded executive board cards maintained in `app/board/members.ts`
@@ -45,7 +45,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 
 ## Sending Authentication Emails with Resend
 
-Supabase Auth manages accounts and generates verification and password-reset
+Supabase Auth manages accounts and generates password-reset
 links. Configure Resend as its custom SMTP provider to deliver these emails.
 This is a hosted Supabase setting; changing this repository or installing the
 Resend SDK alone does not activate it. No application redeployment is required.
@@ -78,7 +78,7 @@ Enter the API key directly in Supabase's SMTP password field. This integration
 does not need a Resend key in the Next.js or Vercel environment, and the key must
 never be included in browser code or a `NEXT_PUBLIC_*` variable.
 
-Configure signup verification using the steps below. Keep the password-reset
+Keep signup confirmation disabled as described below. Keep the password-reset
 template unchanged and include `https://shpeuga.com/resetpassword` in the allowed
 redirect URLs (`http://localhost:3000/resetpassword` for local testing). Review
 Supabase's email rate limits alongside your Resend sending limits.
@@ -87,71 +87,36 @@ Supabase's email rate limits alongside your Resend sending limits.
 
 Using an account and inbox you control, request a password reset, confirm the
 message appears in Resend's email logs, and follow the link through setting a
-new password and logging in. If signup confirmation is enabled, also test a new
-signup with a UGA email you control and follow its confirmation link. Delivery
-and authentication should both succeed before considering the switch complete.
+new password and logging in. Delivery and authentication should both succeed
+before considering the switch complete.
 
 Reference: [Resend's Supabase SMTP guide](https://resend.com/docs/send-with-supabase-smtp)
 and [Supabase custom SMTP documentation](https://supabase.com/docs/guides/auth/auth-smtp).
 
-## Require Email Verification
+## Signup Without Email Verification
 
-The signup form sends member details as Supabase Auth metadata and opens the
-existing `/confirmemail` page. That page can resend a verification email. The
-member profile is created by a database trigger when Supabase confirms the email;
-signup no longer inserts into `members` from an unauthenticated browser.
+In Supabase **Authentication → Sign In / Providers → Email**, turn **Confirm
+email OFF** and save. Signup then creates a session immediately and opens the
+member profile. Supabase marks these accounts confirmed automatically; users do
+not have to follow an email link. Changing this hosted setting needs no redeploy.
 
-Complete these hosted settings before using this flow in production:
+Keep `supabase/migrations/202610050001_verified_member_signup.sql` installed.
+Its database trigger creates member profiles from signup metadata, always with
+role `member`. Automatic confirmation runs that trigger without an email step.
+The frontend no longer inserts profiles, so it does not conflict with the
+migration's policy blocking browser inserts. Existing RLS rules and executive
+role checks continue to control access. For a fresh database, install the
+migration before enabling signup on the website.
 
-1. In Supabase **Authentication → Sign In / Providers → Email**, enable
-   **Confirm email**. This is essential: with confirmation disabled, Supabase
-   automatically marks new accounts as confirmed without verifying ownership.
-   The signup form rejects an unexpected immediate session, but that browser
-   check does not replace this hosted setting.
-2. Run `supabase/migrations/202610050001_verified_member_signup.sql` in the
-   Supabase SQL Editor as the project database owner, then deploy this code.
-   The migration adds profile creation after verification and restrictive RLS
-   policies requiring a verified email and blocking direct browser inserts.
-   Existing member access and exec permissions still depend on the project's
-   existing permissive RLS policies. Apply the migration and new frontend
-   together: older signup code relies on browser inserts that are now blocked.
-3. In **Authentication → URL Configuration**, set the production Site URL to
-   `https://shpeuga.com`. Add `https://shpeuga.com/auth/confirm` to Redirect URLs,
-   plus `http://localhost:3000/auth/confirm` for local testing. Add the exact
-   callback URL for any other preview origin you use.
-4. In **Authentication → Email → Confirm signup**, use this confirmation link:
+`/confirmemail` now redirects to `/login`. The `/auth/confirm` endpoint remains
+only for previously issued links and returns invalid links to login. Resend SMTP
+continues to deliver password-reset emails. Existing users, profiles, and points
+are retained. Any already-pending unconfirmed accounts need administrator review;
+changing the setting is not a bulk update to existing users.
 
-   ```html
-   <h2>Verify your UGA email</h2>
-   <p>Confirm your email address to activate your UGA SHPE account.</p>
-   <p><a href="{{ .RedirectTo }}?token_hash={{ .TokenHash }}&amp;type=email">Verify email</a></p>
-   ```
-
-   The token-hash flow works even when the email opens in another browser or on
-   another device. `/auth/confirm` also accepts a PKCE code from Supabase's
-   default confirmation template when opened in the browser used for signup.
-   Successful verification saves the session in cookies and opens `/profile`.
-   Expired or invalid links return to `/confirmemail` with resend instructions.
-5. Configure working SMTP delivery (see the Resend instructions above).
-
-Existing profiles and roles are retained. Accounts previously auto-confirmed by
-Supabase remain confirmed; enabling this setting does not retroactively prove
-those users owned their inboxes. Older pending accounts that already have a
-member profile can verify without new signup metadata. An older pending account
-with no profile and no metadata needs administrator assistance to restore its
-member details before confirmation.
-
-Before release, use a UGA inbox you control to check that signup sends an email,
-does not create a member row or allow login before verification, and creates
-exactly one member profile after following the link. Check resend, an expired
-link, confirmation in another browser, profile editing, password reset, and an
-existing exec login. Direct member-table requests from anonymous or unverified
-sessions must be rejected by RLS. Automated local checks run with `npm test`;
-they do not validate hosted settings or actual email delivery.
-
-Implementation references: [Supabase's Next.js confirmation flow](https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs),
-[user metadata and database triggers](https://supabase.com/docs/guides/auth/managing-user-data),
-and [resending confirmation emails](https://supabase.com/docs/reference/javascript/auth-resend).
+To check the flow, register a new UGA account and verify that its member profile
+opens immediately, with one member row in Supabase. Also test an existing login,
+password reset, and executive access. Automated checks run with `npm test`.
 
 ## Project Structure
 

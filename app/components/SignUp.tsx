@@ -57,7 +57,6 @@ export default function SignUp(){
                 email: normalizedEmail,
                 password,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/confirm`,
                     data: {
                         first_name: firstName.trim(),
                         last_name: lastName.trim(),
@@ -71,15 +70,14 @@ export default function SignUp(){
                 setError(error.message);
                 return;
             }
-            // Confirmation must be enabled in Supabase, otherwise signup logs in
-            // immediately without proving ownership of the email address.
-            if (data.session) {
-                await supabase.auth.signOut();
-                setError("Email verification is unavailable. Please contact UGA SHPE before trying again.");
+            if (!data.session) {
+                setError("Registration is temporarily unavailable. Please contact UGA SHPE.");
                 return;
             }
-            // The database creates the member profile when the email is verified.
-            router.push("/confirmemail");
+            // Supabase automatically confirms new accounts and the database
+            // trigger creates their member profiles from the signup details.
+            router.push("/profile");
+            router.refresh();
         } catch {
             setError("Unable to create your account. Please try again.");
         } finally {

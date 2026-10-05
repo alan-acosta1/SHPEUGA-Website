@@ -17,8 +17,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // again in every component. Keep this callback synchronous: Supabase
         // invokes it while holding its authentication lock.
         const { data: { subscription } } = createClient().auth.onAuthStateChange((_event, nextSession) => {
-            const user = nextSession?.user;
-            setSession({ user: user?.email_confirmed_at ? user : null, loading: false });
+            setSession({ user: nextSession?.user ?? null, loading: false });
         });
         return () => subscription.unsubscribe();
     }, []);

@@ -6,9 +6,9 @@ export async function GET(request: NextRequest) {
     const tokenHash = searchParams.get("token_hash");
     const type = searchParams.get("type");
     const code = searchParams.get("code");
-    const destination = new URL("/confirmemail?error=invalid_link", request.url);
+    const destination = new URL("/login", request.url);
 
-    // Accept signup confirmation only; recovery links use /resetpassword.
+    // Preserve previously sent signup links; recovery links use /resetpassword.
     if (!searchParams.has("error") && (
         (tokenHash && (type === "email" || type === "signup")) ||
         (code && !tokenHash)
@@ -28,8 +28,7 @@ export async function GET(request: NextRequest) {
                 await supabase.auth.signOut();
             }
         } catch {
-            // Expired, already-used, and failed exchanges can all be retried by
-            // requesting another email from the confirmation page.
+            // Previously issued invalid links return to normal login.
         }
     }
 

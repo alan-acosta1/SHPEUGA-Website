@@ -1,5 +1,6 @@
--- Apply before deploying the new signup flow. Enable Supabase's Confirm email
--- setting and configure the signup email template as described in README.md.
+-- Member profile creation and member-table access rules. The current signup
+-- flow uses Supabase automatic confirmation (Confirm email OFF); this trigger
+-- creates profiles immediately without an email verification step.
 -- Existing member profiles and executive roles are preserved.
 begin;
 
