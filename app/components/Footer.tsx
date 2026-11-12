@@ -11,6 +11,9 @@ export default function Footer(){
                 className="text-orange-700 text-5xl hover:text-blue-700 cursor-pointer transition-colors"
                 />
             </a>
+            <Link href="/conference" className="inline-flex min-h-11 items-center text-sm text-orange-700 underline underline-offset-4 hover:text-blue-950">
+                National Conference
+            </Link>
             <Link href="/privacy" className="inline-flex min-h-11 items-center text-sm text-slate-600 underline underline-offset-4 hover:text-blue-950">
                 Privacy Policy
             </Link>

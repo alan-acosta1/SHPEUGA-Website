@@ -85,6 +85,7 @@ export default function Home() {
                 <div className="p-4 text-center">
                 <p className="font-bold text-blue-950 mt-2">Conferences & Leadership</p>
                 <p className="text-sm text-blue-950 mt-2">Members attend SHPE National Convention and regional events, building connections and gaining leadership experience</p>
+                <Link href="/conference" className="mt-3 inline-flex min-h-11 items-center font-semibold text-orange-700 underline underline-offset-4 hover:text-blue-950">Explore the national conference</Link>
                 </div>
               </div> 
 

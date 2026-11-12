@@ -38,6 +38,7 @@ html { scroll-padding-top: 100px; }
 .board-dialog-photo { width: 160px; height: 200px; }
 .board-dialog-copy { width: 100%; }
 body:has(.board-dialog[open]) { overflow: hidden; }
+body:has(.conference-gallery-dialog[open]) { overflow: hidden; }
 .member-table th { color: white; }
 .member-table td { overflow-wrap: anywhere; }
 .member-table select { min-height: 44px; max-width: 100%; font-size: 16px; }

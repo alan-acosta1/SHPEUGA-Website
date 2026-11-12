@@ -12,6 +12,7 @@ const links = [
     { href: "/board", label: "Board" },
     { href: "/about", label: "About" },
     { href: "/event", label: "Events" },
+    { href: "/conference", label: "Conference" },
     { href: "/sponser", label: "Sponsors" },
     { href: "/points", label: "Points" },
 ];
